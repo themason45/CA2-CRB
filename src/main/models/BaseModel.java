@@ -1,4 +1,4 @@
-package org.themasons.covidroombooker.models;
+package main.models;
 
 public class BaseModel {
     public int pk;

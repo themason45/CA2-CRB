@@ -1,0 +1,8 @@
+pk,roomCode,capacity,university,bookable,occupancy
+0,HA208,50,0,false,0
+1,HA207,34,0,false,0
+2,QU101,64,0,false,0
+3,NI420,69,0,true,32
+4,CE101,20,0,true,3
+5,PO201,15,0,true,14
+6,SH237,2,0,true,2
