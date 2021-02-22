@@ -1,3 +1,5 @@
-org.themasons.covidroombooker
-org.themasons.covidroombooker.models
-org.themasons.covidroombooker.support
+main
+main.menus
+main.models
+main.support
+main.support.menu

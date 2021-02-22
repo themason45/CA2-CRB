@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"org.themasons.covidroombooker"},{"l":"org.themasons.covidroombooker.models"},{"l":"org.themasons.covidroombooker.support"}];updateSearchResults();
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"main"},{"l":"main.menus"},{"l":"main.models"},{"l":"main.support"},{"l":"main.support.menu"}];updateSearchResults();

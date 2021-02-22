@@ -4,6 +4,7 @@ import main.support.TimeSlot;
 
 import java.sql.Time;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
@@ -40,5 +41,16 @@ public class Booking extends BaseModel {
 
     public TimeSlot getTimeSlot() {
         return timeSlot;
+    }
+
+    public String getStatus() {
+        return timeSlot.hasElapsed() ? "COMPLETED" : "SCHEDULED";
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s | %s | %s | %s | %s",
+                timeSlot.getFormattedStartTime(), getStatus(), assistant.getEmail(),
+                room.getRoomCode(), studentEmail);
     }
 }

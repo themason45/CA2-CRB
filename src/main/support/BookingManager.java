@@ -2,10 +2,13 @@ package main.support;
 
 import main.BookingApp;
 import main.models.*;
+import main.support.menu.BaseMenuOption;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  * This creates bookings in rooms, for a given university
@@ -17,7 +20,7 @@ import java.util.ArrayList;
  *     <li>
  * 4. Every time-slot has a fixed duration – a positive number representing the duration of a test, in minutes. This quantity includes the time spent doing the test and the time to sanitize the room. The current policy establishes this duration to be 60 minutes.</li>
  * </ul>
- *
+ * <p>
  * Time slots should be 60 minutes apart
  */
 public class BookingManager {
@@ -36,7 +39,7 @@ public class BookingManager {
     private void generateTimeSlots() {
         int weeksAhead = Integer.parseInt((String) BookingApp.appProps().get("weeks.ahead"));
         int dow = LocalDate.now().getDayOfWeek().getValue();
-        LocalDate currentDate = LocalDate.now().minusDays(dow-1); // Get date of the week beginning
+        LocalDate currentDate = LocalDate.now().minusDays(dow - 1); // Get date of the week beginning
         // For each week
         for (int i = 0; i < weeksAhead; i++) {
             // For each day
@@ -59,13 +62,70 @@ public class BookingManager {
         // Update the existing lists
         new ModelWrapper<Room>().updateArr(university.rooms, room);
         new ModelWrapper<Assistant>().updateArr(university.assistants, assistant);
+
+        // Add this booking the the manager's list of bookings
+        bookings.add(booking);
     }
 
-    public void listTimeSlots() {
-        timeSlots.forEach(System.out::println);
+    public ArrayList<Assistant> availableAssistants(TimeSlot timeSlot) {
+        return university.assistants.stream().filter(x -> x.checkAvailability(timeSlot)).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public ArrayList<Room> availableRooms(TimeSlot timeSlot) {
+        return university.rooms.stream().filter(x -> x.checkAvailability(timeSlot)).collect(Collectors.toCollection(ArrayList::new));
     }
 
     public ArrayList<TimeSlot> getTimeSlots() {
         return this.timeSlots;
     }
-}
+
+    public ArrayList<Room> bookableRooms() {
+        return this.university.rooms.stream().filter(x -> x.bookable).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public ArrayList<Assistant> getAssistants() {
+        return university.assistants;
+    }
+
+    public ArrayList<BaseMenuOption> tsAssistantOptionMap() {
+        ArrayList<BaseMenuOption> ol = new ArrayList<>();
+
+        ArrayList<Assistant> assistants = this.getAssistants();
+        for (TimeSlot ts : this.getTimeSlots()) {
+            ArrayList<BaseMenuOption> mapped = assistants.stream().map(x ->
+                    new BaseMenuOption(String.format("%s | %s | %s",
+                            ts.getFormattedStartTime(), x.checkAvailability(ts) ? "FREE" : "BUSY", x.getEmail()),
+                            BookingManager.class, "addToShift", x))
+                    .collect(Collectors.toCollection(ArrayList::new));
+            ol.addAll(mapped);
+        }
+
+        return ol;
+    }
+
+    public ArrayList<String> tsAssistantMap() {
+        ArrayList<String> ol = new ArrayList<>();
+
+        ArrayList<Assistant> assistants = this.getAssistants();
+        for (TimeSlot ts : this.getTimeSlots()) {
+            ArrayList<String> mapped = assistants.stream().map(x ->
+                    String.format("%s | %s | %s", ts.getFormattedStartTime(), x.checkAvailability(ts) ? "FREE" : "BUSY",
+                            x.getEmail())).collect(Collectors.toCollection(ArrayList::new));
+            ol.addAll(mapped);
+        }
+        return ol;
+    }
+
+        /**
+         * This method is invoked by {@link main.menus.AddAssistantsOnShitMenu#performCreation(String)}.
+         *
+         * @param assistant The assistant to be put on shift
+         */
+        @SuppressWarnings("unused")
+        public void addToShift(Assistant assistant, LocalDate localDate){
+            int dow = localDate.getDayOfWeek().getValue();
+            assistant.addDayActive(dow);
+
+            university.assistants = new ModelWrapper<Assistant>().updateArr(university.assistants, assistant);
+        }
+    }

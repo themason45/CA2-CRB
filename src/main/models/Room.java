@@ -1,5 +1,7 @@
 package main.models;
 
+import main.support.TimeSlot;
+
 import java.util.ArrayList;
 
 /**
@@ -36,7 +38,7 @@ public class Room extends BaseModel {
 
     // Bookable room stuff
     private int occupancy;
-    private boolean bookable;
+    public boolean bookable;
     private ArrayList<Booking> bookings;
 
     public Room(int pk, String roomCode, int capacity, boolean bookable) {
@@ -49,6 +51,17 @@ public class Room extends BaseModel {
         }
         this.bookable = bookable;
         this.bookings = new ArrayList<>();
+    }
+
+    public boolean checkAvailability(TimeSlot timeSlot) {
+        if (!bookable) return false;
+
+        // Check if there are no bookings with the current time slot
+        boolean noBookings = true;
+        for (Booking booking : bookings) {
+            noBookings = booking.getTimeSlot() != timeSlot;
+        }
+        return noBookings;
     }
 
     public String toString() {

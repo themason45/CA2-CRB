@@ -1,5 +1,6 @@
 package main;
 
+import main.menus.MainMenu;
 import main.models.Assistant;
 import main.models.University;
 import main.support.BookingManager;
@@ -67,13 +68,13 @@ public class BookingApp {
 
         Assistant assistant = university.getAssistants().get(0); // Grab first assistant
 
+        //bookingManager.createBooking(bookingManager.getTimeSlots().get(20), university.rooms.get(4), assistant, "sam@uok.ac.uk");
         bookingManager.createBooking(bookingManager.getTimeSlots().get(0), university.rooms.get(4), assistant, "sam@uok.ac.uk");
-        for (TimeSlot ts : bookingManager.getTimeSlots()) {
-            System.out.printf("%s | Available: %s \n", ts, assistant.checkAvailability(ts));
-        }
 
-        // This booking manager should hold all of the functions required to do stuff
+        Scanner scanner = new Scanner(System.in);
 
+        MainMenu mainMenu = new MainMenu(bookingManager, scanner);
+        mainMenu.draw();
     }
 
     /**
@@ -90,7 +91,7 @@ public class BookingApp {
      * @return Parsed input list into a Java array where each value is a double
      */
     public static ArrayList<Double> parseSublistAsDoubles(String input) {
-        String[] stringList =  input.replaceAll("[\\[\\]]", "").split(" ");
+        String[] stringList = input.replaceAll("[\\[\\]]", "").split(" ");
         return (ArrayList<Double>) Arrays.stream(stringList).map(Double::parseDouble).collect(Collectors.toList());
     }
 
@@ -99,7 +100,7 @@ public class BookingApp {
      * @return Parsed input list into a Java array where each value is an integer
      */
     public static ArrayList<Integer> parseSublistAsInts(String input) {
-        String[] stringList =  input.replaceAll("[\\[\\]]", "").split(" ");
+        String[] stringList = input.replaceAll("[\\[\\]]", "").split(" ");
         return (ArrayList<Integer>) Arrays.stream(stringList).map(Integer::parseInt).collect(Collectors.toList());
     }
 

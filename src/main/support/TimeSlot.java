@@ -4,6 +4,7 @@ import main.BookingApp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -48,5 +49,13 @@ public class TimeSlot {
 
     public String toString() {
         return String.format("%s | %s", start, finish);
+    }
+
+    public Boolean hasElapsed() {
+        return LocalDateTime.now().isAfter(this.finish);
+    }
+
+    public String getFormattedStartTime() {
+        return start.format(DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm"));
     }
 }

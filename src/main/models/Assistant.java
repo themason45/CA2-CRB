@@ -92,7 +92,7 @@ public class Assistant extends BaseModel {
      * @return String in the format: | <name> | <email> |
      */
     public String toString() {
-        return String.format("| %s | %s | %s", name, email, Arrays.toString(daysActive));
+        return String.format("| %s | %s |", name, email);
     }
 
     public void setUniversity(University university) {
@@ -112,6 +112,22 @@ public class Assistant extends BaseModel {
             this.bookings.add(booking);
         } else {
             throw new IllegalArgumentException("Booking time slot is not available");
+        }
+    }
+
+    public void addDayActive(Integer day) {
+        if (0 < day & day < 6) {
+            Integer[] copy = Arrays.copyOf(daysActive, daysActive.length + 1);
+            copy[daysActive.length] = day;
+            this.daysActive = Arrays.stream(copy).sorted(((o1, o2) -> (o1 > o2) ? 1 : 0)).toArray(Integer[]::new);
+        }
+    }
+
+    public void removeDayActive(Integer day) {
+        if (0 < day & day < 6) {
+            int index = Arrays.asList(daysActive).indexOf(day);
+            System.arraycopy(daysActive, daysActive.length - 1, daysActive, index,
+                    daysActive.length - index - 1);
         }
     }
 }

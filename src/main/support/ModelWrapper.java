@@ -55,7 +55,7 @@ public class ModelWrapper<T extends BaseModel> {
      * @param arr The input arraylist
      * @param newValue The new value to update the arraylist value with
      */
-    public void updateArr(ArrayList<T> arr, T newValue) {
+    public ArrayList<T> updateArr(ArrayList<T> arr, T newValue) {
         int i = 0;
         for (T obj : arr) {
             if (obj.pk == newValue.pk) {
@@ -63,5 +63,6 @@ public class ModelWrapper<T extends BaseModel> {
             }
             i++;
         }
+        return arr;
     }
 }
