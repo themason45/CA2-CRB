@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="CA2-CRB:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/CA2_CRB_jar</output-path>
+    <root id="archive" name="CA2-CRB.jar">
+      <element id="module-output" name="CA2-CRB" />
+    </root>
+  </artifact>
+</component>
