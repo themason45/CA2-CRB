@@ -53,7 +53,6 @@ public class BookingApp {
     }
 
     public static void main(String[] args) {
-        // TODO: Implement all the malarkey here
         // TODO: Add remaining values to csv
         // Create a University instance
         University university = new University(0);
@@ -66,10 +65,7 @@ public class BookingApp {
         // Create a BookingManager instance
         BookingManager bookingManager = new BookingManager(university);
 
-        Assistant assistant = university.getAssistants().get(0); // Grab first assistant
-
-        //bookingManager.createBooking(bookingManager.getTimeSlots().get(20), university.rooms.get(4), assistant, "sam@uok.ac.uk");
-        bookingManager.createBooking(bookingManager.getTimeSlots().get(0), university.rooms.get(4), assistant, "sam@uok.ac.uk");
+        bookingManager.createBooking(bookingManager.getTimeSlots().get(0), "sam@uok.ac.uk");
 
         Scanner scanner = new Scanner(System.in);
 

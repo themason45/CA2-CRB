@@ -1,19 +1,15 @@
 package main.support.menu;
 
-import jdk.jshell.spi.ExecutionControl;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.stream.Collectors;
-import java.util.zip.DataFormatException;
 
 public class BaseCreateMenu extends BaseListMenu {
     protected String instructions = "";
 
     public BaseCreateMenu(BaseMenu previousMenu, Scanner scanner) {
         super(previousMenu, scanner);
+        blockOtherOptions = true;
     }
 
     public ByteArrayOutputStream printStream() {
@@ -25,6 +21,7 @@ public class BaseCreateMenu extends BaseListMenu {
         printStream.printf("Adding %s\n", title);
         printStream = renderList(printStream);
 
+        printStream.println("Please, enter one of the following:\n");
         printStream.println(instructions);
         printStream.print("""
                 0. Back to main menu.
@@ -42,12 +39,9 @@ public class BaseCreateMenu extends BaseListMenu {
         throw new UnsupportedOperationException("This function must be overridden");
     }
 
-    public void draw() {
-        ByteArrayOutputStream baos = this.printStream();
-        System.out.print(baos.toString());
-
+    public void postDraw(boolean skipLine) {
         // Take the user's input
-        scanner.nextLine();
+        if (!skipLine) scanner.nextLine();
         String input = scanner.nextLine();
 
         clearScreen();
@@ -59,7 +53,8 @@ public class BaseCreateMenu extends BaseListMenu {
         } catch (NumberFormatException e) {
             // If the input is a string, we want to parse it
             this.performCreation(input);
+        } catch (IllegalArgumentException e) {
+            this.error(e);
         }
-
     }
 }

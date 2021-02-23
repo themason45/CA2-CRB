@@ -3,6 +3,7 @@ package main.support.menu;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -16,6 +17,9 @@ public class BaseMenu {
 
     public BaseMenu previousMenu;
     public Scanner scanner;
+
+    public boolean longFooter = false;
+    public boolean blockOtherOptions = false;  // If an integer other than 0, or -1, is inputted, then block it
 
     public BaseMenu(BaseMenu previousMenu, Scanner scanner) {
         this.previousMenu = previousMenu;
@@ -51,12 +55,18 @@ public class BaseMenu {
         }
         printStream.println();  // Add trailing new line
 
-        printStream.print("""
-                After selecting one the options above, you will be presented other screens.
-                If you press 0, you will be able to return to this main menu.
-                Press -1 (or ctrl+c) to quit this application.
+        if (longFooter) {
+            printStream.print("""
+                    After selecting one the options above, you will be presented other screens.
+                    If you press 0, you will be able to return to this main menu.
+                    Press -1 (or ctrl+c) to quit this application.
+                    """);
+        } else {
+            printStream.print("""
+                0. Back to main menu.
+                -1. Quit application.
                 """);
-
+        }
 
         return byteArrayOutputStream;
     }
@@ -76,7 +86,7 @@ public class BaseMenu {
      *
      * @param optionNumber The input number from the user
      */
-    public void selectOption(int optionNumber) {
+    public void selectOption(int optionNumber) throws IllegalArgumentException {
         // TODO: Add checks for a valid input
 
         switch (optionNumber) {
@@ -90,18 +100,13 @@ public class BaseMenu {
                 }
                 break;
             default:
+                if (blockOtherOptions) throw new IllegalArgumentException("This option is not valid");
                 BaseMenuOption option = decodeOption(optionNumber);
                 option.execute();
         }
     }
 
-    /**
-     * Draw the result of {@link #printStream()} to the console, and wait for user input
-     */
-    public void draw() {
-        ByteArrayOutputStream baos = this.printStream();
-        System.out.print(baos.toString());
-
+    public void postDraw(boolean skipLine) {
         // Take the user's input
         int selection = scanner.nextInt();
 
@@ -111,10 +116,30 @@ public class BaseMenu {
     }
 
     /**
+     * Draw the result of {@link #printStream()} to the console, and wait for user input
+     */
+    public void draw() {
+        ByteArrayOutputStream baos = this.printStream();
+        System.out.print(baos.toString());
+
+        this.postDraw(false);
+    }
+
+    /**
      * Clear the screen, this is used when moving to a new menu
      */
     public void clearScreen() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
+    }
+
+    public void redrawWithMessage(String message) {
+        ByteArrayOutputStream baos = this.printStream();
+        System.out.printf("%s\n%s", message, baos.toString());
+        this.postDraw(true);
+    }
+
+    public void error(Exception e) {
+        this.redrawWithMessage(String.format("Error!\n%s", e.getMessage()));
     }
 }

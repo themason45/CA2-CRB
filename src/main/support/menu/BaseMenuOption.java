@@ -61,7 +61,7 @@ public class BaseMenuOption {
         }
     }
 
-    public void executeOnInstance(Object instance, Object... initArgs) {
+    public Object executeOnInstance(Object instance, Object... initArgs) {
         Object[] args = Arrays.copyOf(funcArgs, funcArgs.length + initArgs.length);
 
         if (args.length - funcArgs.length >= 0)
@@ -69,10 +69,11 @@ public class BaseMenuOption {
 
         try {
             Method method = methodClass.getMethod(methodIdentifier, Arrays.stream(args).map(Object::getClass).toArray(Class<?>[]::new));
-            method.invoke(instance, args);
+            return method.invoke(instance, args);
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     public static BaseMenuOption NOOP = new BaseMenuOption("No operation", NoOpClass.class, "noop");

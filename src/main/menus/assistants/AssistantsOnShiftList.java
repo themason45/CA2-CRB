@@ -1,5 +1,6 @@
-package main.menus;
+package main.menus.assistants;
 
+import main.menus.MainMenu;
 import main.models.Assistant;
 import main.support.BookingManager;
 import main.support.TimeSlot;

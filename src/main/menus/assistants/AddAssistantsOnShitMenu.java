@@ -1,5 +1,6 @@
-package main.menus;
+package main.menus.assistants;
 
+import main.menus.MainMenu;
 import main.support.BookingManager;
 import main.support.menu.BaseCreateMenu;
 import main.support.menu.BaseMenuOption;

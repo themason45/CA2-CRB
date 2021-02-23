@@ -53,4 +53,8 @@ public class Booking extends BaseModel {
                 timeSlot.getFormattedStartTime(), getStatus(), assistant.getEmail(),
                 room.getRoomCode(), studentEmail);
     }
+
+    public Boolean isCompleted() {
+        return (this.getStatus().equals("COMPLETED"));
+    }
 }

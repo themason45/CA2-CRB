@@ -41,8 +41,7 @@ public class BaseListMenu extends BaseMenu {
         PrintStream printStream = new PrintStream(byteArrayOutputStream);
 
         printStream.print("University of Knowledge - COVID Test \n\n");
-        if (this.fullTitle == null) {
-            //noinspection ConstantConditions
+        if (this.fullTitle != null) {
             printStream.println(fullTitle);
         } else {
             printStream.printf("List of %s:\n", title);

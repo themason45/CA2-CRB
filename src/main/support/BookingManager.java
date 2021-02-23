@@ -1,13 +1,12 @@
 package main.support;
 
 import main.BookingApp;
+import main.menus.assistants.AddAssistantsOnShitMenu;
 import main.models.*;
 import main.support.menu.BaseMenuOption;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.stream.Collectors;
 
 /**
@@ -31,6 +30,7 @@ public class BookingManager {
 
     public BookingManager(University university) {
         this.university = university;
+
         this.timeSlots = new ArrayList<>();
         this.bookings = new ArrayList<>();
         generateTimeSlots();
@@ -51,7 +51,15 @@ public class BookingManager {
         }
     }
 
-    public void createBooking(TimeSlot timeSlot, Room room, Assistant assistant, String studentEmail) {
+    public Booking createBooking(TimeSlot timeSlot, String studentEmail) {
+        Room room = availableRooms(timeSlot).stream().findFirst().orElse(null);
+        Assistant assistant = availableAssistants(timeSlot).stream().findFirst().orElse(null);
+        if (room == null) {
+            throw new IllegalArgumentException("No rooms available at this time slot");
+        } else if (assistant == null) {
+            throw new IllegalArgumentException("No assistants available at this time slot");
+        }
+
         ModelWrapper<Booking> bookingModelWrapper = new ModelWrapper<>();
         Booking booking = new Booking(bookingModelWrapper.nextPk(bookings), timeSlot, room, assistant, studentEmail);
 
@@ -64,7 +72,9 @@ public class BookingManager {
         new ModelWrapper<Assistant>().updateArr(university.assistants, assistant);
 
         // Add this booking the the manager's list of bookings
-        bookings.add(booking);
+        this.bookings.add(booking);
+
+        return booking;
     }
 
     public ArrayList<Assistant> availableAssistants(TimeSlot timeSlot) {
@@ -87,6 +97,10 @@ public class BookingManager {
         return university.assistants;
     }
 
+    /**
+     * @return An ArrayList of {@link BaseMenuOption}s which combine Assistants, and Time slots, and have the function
+     * {@link BookingManager#addToShift(Assistant, LocalDate)}, with the local date already filled
+     */
     public ArrayList<BaseMenuOption> tsAssistantOptionMap() {
         ArrayList<BaseMenuOption> ol = new ArrayList<>();
 
@@ -103,6 +117,12 @@ public class BookingManager {
         return ol;
     }
 
+    /**
+     * Maps together the assistants and time slots in order to display them in the
+     * {@link main.menus.assistants.AssistantsOnShiftList} menu.
+     *
+     * @return An ArrayList of Strings which combine Assistants, and Time slots
+     */
     public ArrayList<String> tsAssistantMap() {
         ArrayList<String> ol = new ArrayList<>();
 
@@ -116,16 +136,29 @@ public class BookingManager {
         return ol;
     }
 
-        /**
-         * This method is invoked by {@link main.menus.AddAssistantsOnShitMenu#performCreation(String)}.
-         *
-         * @param assistant The assistant to be put on shift
-         */
-        @SuppressWarnings("unused")
-        public void addToShift(Assistant assistant, LocalDate localDate){
-            int dow = localDate.getDayOfWeek().getValue();
-            assistant.addDayActive(dow);
+    /**
+     * This method is invoked by {@link AddAssistantsOnShitMenu#performCreation(String)}.
+     *
+     * @param assistant The assistant to be put on shift
+     */
+    @SuppressWarnings("unused")
+    public void addToShift(Assistant assistant, LocalDate localDate) {
+        int dow = localDate.getDayOfWeek().getValue();
+        assistant.addDayActive(dow);
 
-            university.assistants = new ModelWrapper<Assistant>().updateArr(university.assistants, assistant);
-        }
+        university.assistants = new ModelWrapper<Assistant>().updateArr(university.assistants, assistant);
     }
+
+    public ArrayList<Booking> getBookings() {
+        return this.bookings;
+    }
+
+    /**
+     * @return An ArrayList of MenuOptions that are preloaded for that timeslot, and will automatically pass it forward
+     * to the {@link #createBooking(TimeSlot, String)} method.
+     */
+    public ArrayList<BaseMenuOption> getTimeSlotOptions() {
+        return this.timeSlots.stream().map(x -> new BaseMenuOption(x.getFormattedStartTime(),
+                this.getClass(), "createBooking", x)).collect(Collectors.toCollection(ArrayList::new));
+    }
+}

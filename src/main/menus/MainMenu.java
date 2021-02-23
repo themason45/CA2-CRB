@@ -1,5 +1,10 @@
 package main.menus;
 
+import main.menus.assistants.AddAssistantsOnShitMenu;
+import main.menus.assistants.AssistantsOnShiftList;
+import main.menus.bookings.AddBookingMenu;
+import main.menus.rooms.BookableRoomList;
+import main.menus.bookings.SelectBookingsList;
 import main.support.BookingManager;
 import main.support.menu.BaseMenu;
 import main.support.menu.BaseMenuOption;
@@ -16,6 +21,7 @@ public class MainMenu extends BaseMenu {
         this.title = "Manage bookings";
         this.options = new ArrayList<>();
         this.bookingManager = bookingManager;
+        this.longFooter = true;
 
         // Bookable rooms
         options.add(new BaseMenuOption("To manage Bookable rooms:"));
@@ -28,7 +34,8 @@ public class MainMenu extends BaseMenu {
 
         // Bookings
         options.add(new BaseMenuOption("To manage Bookings:"));
-        options.add(new SegueOption("Add", SelectBookingsList.class, this, scanner, bookingManager));
+        options.add(new SegueOption("List", SelectBookingsList.class, this, scanner, bookingManager));
+        options.add(new SegueOption("Add", AddBookingMenu.class, this, scanner, bookingManager));
     }
 
     public void setBookingManager(BookingManager bookingManager) {
