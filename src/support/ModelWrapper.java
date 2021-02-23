@@ -1,6 +1,6 @@
-package main.support;
+package support;
 
-import main.models.BaseModel;
+import models.BaseModel;
 
 import java.util.ArrayList;
 

@@ -1,9 +1,8 @@
-package main.models;
+package models;
 
-import main.support.TimeSlot;
+import support.TimeSlot;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 /**
  * Room object is defined as follows:

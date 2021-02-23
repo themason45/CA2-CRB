@@ -1,7 +1,6 @@
-package main.models;
+package models;
 
-import main.BookingApp;
-import main.support.TimeSlot;
+import support.TimeSlot;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
-package main.support.menu;
+package support.menu;
 
-import main.support.BookingManager;
+import support.BookingManager;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 /**
  * Extension of {@link BaseMenu} which prioritises the displaying of lists over interaction, this can be used to
- * list out specific objects (using their <code>.toString()</code> method), such as {@link main.models.Room} objects.
+ * list out specific objects (using their <code>.toString()</code> method), such as {@link models.Room} objects.
  */
 public class BaseListMenu extends BaseMenu {
     public int offset = 11;

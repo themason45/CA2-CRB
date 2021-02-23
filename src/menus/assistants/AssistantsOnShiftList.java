@@ -1,14 +1,10 @@
-package main.menus.assistants;
+package menus.assistants;
 
-import main.menus.MainMenu;
-import main.models.Assistant;
-import main.support.BookingManager;
-import main.support.TimeSlot;
-import main.support.menu.BaseListMenu;
+import menus.MainMenu;
+import support.BookingManager;
+import support.menu.BaseListMenu;
 
-import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 public class AssistantsOnShiftList extends BaseListMenu {
     public AssistantsOnShiftList(MainMenu previousMenu, Scanner scanner, BookingManager bookingManager) {

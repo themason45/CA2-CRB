@@ -1,4 +1,4 @@
-package main.support.menu;
+package support.menu;
 
 /**
  * {@link BaseMenuOption} which accesses a method of a model

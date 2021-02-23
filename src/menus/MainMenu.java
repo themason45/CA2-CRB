@@ -1,15 +1,15 @@
-package main.menus;
+package menus;
 
-import main.menus.assistants.AddAssistantsOnShitMenu;
-import main.menus.assistants.AssistantsOnShiftList;
-import main.menus.bookings.AddBookingMenu;
-import main.menus.rooms.AddBookableRoomMenu;
-import main.menus.rooms.BookableRoomList;
-import main.menus.bookings.SelectBookingsList;
-import main.support.BookingManager;
-import main.support.menu.BaseMenu;
-import main.support.menu.BaseMenuOption;
-import main.support.menu.SegueOption;
+import menus.assistants.AddAssistantsOnShitMenu;
+import menus.assistants.AssistantsOnShiftList;
+import menus.bookings.AddBookingMenu;
+import menus.rooms.AddBookableRoomMenu;
+import menus.rooms.BookableRoomList;
+import menus.bookings.SelectBookingsList;
+import support.BookingManager;
+import support.menu.BaseMenu;
+import support.menu.BaseMenuOption;
+import support.menu.SegueOption;
 
 import java.util.ArrayList;
 import java.util.Scanner;

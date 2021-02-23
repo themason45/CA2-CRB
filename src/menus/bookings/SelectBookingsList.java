@@ -1,10 +1,9 @@
-package main.menus.bookings;
+package menus.bookings;
 
-import main.menus.MainMenu;
-import main.menus.bookings.BookingsList;
-import main.support.BookingManager;
-import main.support.menu.BaseMenu;
-import main.support.menu.SegueOption;
+import menus.MainMenu;
+import support.BookingManager;
+import support.menu.BaseMenu;
+import support.menu.SegueOption;
 
 import java.util.ArrayList;
 import java.util.Scanner;

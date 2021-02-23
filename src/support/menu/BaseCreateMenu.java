@@ -1,6 +1,6 @@
-package main.support.menu;
+package support.menu;
 
-import main.support.BookingManager;
+import support.BookingManager;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;

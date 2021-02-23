@@ -1,4 +1,4 @@
-package main.models;
+package models;
 
 public class BaseModel {
     public int pk;

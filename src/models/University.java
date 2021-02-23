@@ -1,6 +1,6 @@
-package main.models;
+package models;
 
-import main.BookingApp;
+import support.Support;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -41,11 +41,11 @@ public class University extends BaseModel {
     /**
      * Fills out the {@link #assistants} list on the current University object
      *
-     * @param csv The parsed csv from the {@link main.BookingApp#parseCsv(InputStream)} method
+     * @param csv The parsed csv from the {@link Support#parseCsv(InputStream)} method
      */
     public void populateAssistants(String[][] csv) {
         for (String[] row : csv) {
-            Integer[] daysActive = BookingApp.parseSublistAsInts(row[3]).toArray(new Integer[0]);
+            Integer[] daysActive = Support.parseSublistAsInts(row[3]).toArray(new Integer[0]);
             Assistant assistant = new Assistant(Integer.parseInt(row[0]), row[1], row[2], daysActive);
             this.addAssistant(assistant);
         }
@@ -70,12 +70,12 @@ public class University extends BaseModel {
     /**
      * Fills out the {@link #rooms} list on the current University object
      *
-     * @param csv The parsed csv from the {@link main.BookingApp#parseCsv(InputStream)} method
+     * @param csv The parsed csv from the {@link BookingApp#parseCsv(InputStream)} method
      */
     public void populateRooms(String[][] csv) {
         for (String[] row : csv) {
             Room room = new Room(Integer.parseInt(row[0]), row[1], Integer.parseInt(row[2]),
-                    BookingApp.parseSublistAsInts(row[5]));
+                    Support.parseSublistAsInts(row[5]));
             this.addRoom(room);
         }
     }

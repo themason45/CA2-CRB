@@ -1,11 +1,6 @@
-package main.models;
+package models;
 
-import main.support.TimeSlot;
-
-import java.sql.Time;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
+import support.TimeSlot;
 
 /**
  * <ul>

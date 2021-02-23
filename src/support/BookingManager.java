@@ -1,9 +1,8 @@
-package main.support;
+package support;
 
-import main.BookingApp;
-import main.menus.assistants.AddAssistantsOnShitMenu;
-import main.models.*;
-import main.support.menu.BaseMenuOption;
+import menus.assistants.AddAssistantsOnShitMenu;
+import models.*;
+import support.menu.BaseMenuOption;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -42,7 +41,7 @@ public class BookingManager {
     }
 
     private void generateTimeSlots() {
-        int weeksAhead = Integer.parseInt((String) BookingApp.appProps().get("weeks.ahead"));
+        int weeksAhead = Integer.parseInt((String) Support.appProps().get("weeks.ahead"));
         int dow = LocalDate.now().getDayOfWeek().getValue();
         LocalDate currentDate = LocalDate.now().minusDays(dow - 1); // Get date of the week beginning
         // For each week
@@ -112,16 +111,6 @@ public class BookingManager {
         return this.timeSlots;
     }
 
-    public ArrayList<Room> allBookableRooms() {
-        ArrayList<Room> allBookableRooms = new ArrayList<>();
-
-        for (TimeSlot ts : this.getTimeSlots()) {
-            allBookableRooms.addAll(bookableRooms(ts));
-        }
-        return allBookableRooms;
-    }
-
-
     public ArrayList<String> formattedBookableRooms() {
         ArrayList<String> formattedBookableRooms = new ArrayList<>();
 
@@ -171,7 +160,7 @@ public class BookingManager {
 
     /**
      * Maps together the assistants and time slots in order to display them in the
-     * {@link main.menus.assistants.AssistantsOnShiftList} menu.
+     * {@link menus.assistants.AssistantsOnShiftList} menu.
      *
      * @return An ArrayList of Strings which combine Assistants, and Time slots
      */

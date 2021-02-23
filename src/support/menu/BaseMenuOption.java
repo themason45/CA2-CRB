@@ -1,4 +1,4 @@
-package main.support.menu;
+package support.menu;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

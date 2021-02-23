@@ -1,13 +1,12 @@
-package main.menus.assistants;
+package menus.assistants;
 
-import main.menus.MainMenu;
-import main.support.BookingManager;
-import main.support.menu.BaseCreateMenu;
-import main.support.menu.BaseMenuOption;
+import menus.MainMenu;
+import support.BookingManager;
+import support.menu.BaseCreateMenu;
+import support.menu.BaseMenuOption;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.IllegalFormatException;
 import java.util.Scanner;
 import java.util.zip.DataFormatException;
 

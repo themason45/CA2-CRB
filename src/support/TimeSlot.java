@@ -1,13 +1,10 @@
-package main.support;
-
-import main.BookingApp;
+package support;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Properties;
 
@@ -21,7 +18,7 @@ public class TimeSlot {
     }
 
     public static Collection<? extends TimeSlot> slotsForDate(LocalDate date){
-        Properties props = BookingApp.appProps();
+        Properties props = Support.appProps();
         int slotLength = Integer.parseInt((String) props.get("timeslot.length"));
         int slotCount = Integer.parseInt((String) props.get("timeslot.count"));
 
@@ -61,14 +58,12 @@ public class TimeSlot {
     }
 
     public static LocalDateTime cleanDateTime(LocalDate date, LocalTime time) {
-        Properties props = BookingApp.appProps();
+        Properties props = Support.appProps();
         int slotCount = Integer.parseInt((String) props.get("timeslot.count"));
 
         if (time.getHour() < 7 | (time.getHour() == 7 + slotCount & time.getMinute() > 0)) throw new IllegalArgumentException(
                 String.format("Given time is unavailable, must be between 07:00, and %02d:00", 7 + slotCount));
 
-        LocalDateTime dtStart = LocalDateTime.of(date, time.withMinute(0));
-
-        return dtStart;
+        return LocalDateTime.of(date, time.withMinute(0));
     }
 }

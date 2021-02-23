@@ -3,6 +3,6 @@ main.menus
 main.menus.assistants
 main.menus.bookings
 main.menus.rooms
-main.models
-main.support
-main.support.menu
+models
+support
+support.menu

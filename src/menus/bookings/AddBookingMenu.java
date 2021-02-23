@@ -1,14 +1,12 @@
-package main.menus.bookings;
+package menus.bookings;
 
-import main.menus.MainMenu;
-import main.models.Assistant;
-import main.models.Booking;
-import main.support.BookingManager;
-import main.support.menu.BaseCreateMenu;
-import main.support.menu.BaseMenuOption;
+import menus.MainMenu;
+import models.Assistant;
+import models.Booking;
+import support.BookingManager;
+import support.menu.BaseCreateMenu;
+import support.menu.BaseMenuOption;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 import java.util.zip.DataFormatException;
 

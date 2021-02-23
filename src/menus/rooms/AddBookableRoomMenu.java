@@ -1,11 +1,11 @@
-package main.menus.rooms;
+package menus.rooms;
 
-import main.menus.MainMenu;
-import main.models.Room;
-import main.support.BookingManager;
-import main.support.TimeSlot;
-import main.support.menu.BaseCreateMenu;
-import main.support.menu.BaseMenuOption;
+import menus.MainMenu;
+import models.Room;
+import support.BookingManager;
+import support.TimeSlot;
+import support.menu.BaseCreateMenu;
+import support.menu.BaseMenuOption;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

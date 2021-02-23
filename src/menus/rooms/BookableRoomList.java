@@ -1,8 +1,8 @@
-package main.menus.rooms;
+package menus.rooms;
 
-import main.menus.MainMenu;
-import main.support.BookingManager;
-import main.support.menu.BaseListMenu;
+import menus.MainMenu;
+import support.BookingManager;
+import support.menu.BaseListMenu;
 
 import java.util.Scanner;
 
