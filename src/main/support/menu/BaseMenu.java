@@ -1,10 +1,9 @@
 package main.support.menu;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -108,11 +107,20 @@ public class BaseMenu {
 
     public void postDraw(boolean skipLine) {
         // Take the user's input
-        int selection = scanner.nextInt();
+        try {
+            if (skipLine) scanner.nextLine();
+            int selection = scanner.nextInt();
 
-        clearScreen();
+            clearScreen();
 
-        this.selectOption(selection);
+            try {
+                this.selectOption(selection);
+            } catch (IllegalArgumentException e) {
+                this.error(e);
+            }
+        } catch (InputMismatchException e) {
+            this.error(new Exception("An integer must be inputted"));
+        }
     }
 
     /**
@@ -140,6 +148,7 @@ public class BaseMenu {
     }
 
     public void error(Exception e) {
+        this.clearScreen();
         this.redrawWithMessage(String.format("Error!\n%s", e.getMessage()));
     }
 }

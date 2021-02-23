@@ -46,7 +46,7 @@ public class AddBookingMenu extends BaseCreateMenu {
         try {
             Booking booking = (Booking) option.executeOnInstance(bookingManager, split[1]);
             this.redrawWithMessage(String.format("Booking added successfully:\n%s", booking));
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             this.error(e);
         }
 

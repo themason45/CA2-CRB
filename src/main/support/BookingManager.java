@@ -51,7 +51,7 @@ public class BookingManager {
         }
     }
 
-    public Booking createBooking(TimeSlot timeSlot, String studentEmail) {
+    public Booking createBooking(TimeSlot timeSlot, String studentEmail) throws IllegalArgumentException {
         Room room = availableRooms(timeSlot).stream().findFirst().orElse(null);
         Assistant assistant = availableAssistants(timeSlot).stream().findFirst().orElse(null);
         if (room == null) {
@@ -154,11 +154,21 @@ public class BookingManager {
     }
 
     /**
+     * @return An ArrayList of timeslots which have available assistants, and rooms
+     */
+    public ArrayList<TimeSlot> getAvailableTimeSlots() {
+        return this.timeSlots.stream()
+                .filter(x -> (this.availableAssistants(x).size() > 0 & this.availableRooms(x).size() > 0))
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    /**
      * @return An ArrayList of MenuOptions that are preloaded for that timeslot, and will automatically pass it forward
      * to the {@link #createBooking(TimeSlot, String)} method.
      */
     public ArrayList<BaseMenuOption> getTimeSlotOptions() {
-        return this.timeSlots.stream().map(x -> new BaseMenuOption(x.getFormattedStartTime(),
+        return this.getAvailableTimeSlots().stream().map(x -> new BaseMenuOption(x.getFormattedStartTime(),
                 this.getClass(), "createBooking", x)).collect(Collectors.toCollection(ArrayList::new));
     }
+
 }

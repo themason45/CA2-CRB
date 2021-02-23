@@ -19,6 +19,7 @@ public class BaseListMenu extends BaseMenu {
 
     public BaseListMenu(BaseMenu previousMenu, Scanner scanner) {
         super(previousMenu, scanner);
+        this.blockOtherOptions = true;
     }
 
     public PrintStream renderList(PrintStream stream) {
