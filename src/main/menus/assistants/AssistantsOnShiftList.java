@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class AssistantsOnShiftList extends BaseListMenu {
     public AssistantsOnShiftList(MainMenu previousMenu, Scanner scanner, BookingManager bookingManager) {
-        super(previousMenu, scanner);
+        super(previousMenu, scanner, bookingManager);
 
         this.list = bookingManager.tsAssistantMap();
         this.title = "Assistants on shift";

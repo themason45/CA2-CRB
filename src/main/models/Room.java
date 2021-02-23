@@ -3,6 +3,7 @@ package main.models;
 import main.support.TimeSlot;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 /**
  * Room object is defined as follows:
@@ -38,10 +39,13 @@ public class Room extends BaseModel {
 
     // Bookable room stuff
     private int occupancy;
-    public boolean bookable;
+    public ArrayList<TimeSlot> bookableTimeslots;
     private ArrayList<Booking> bookings;
 
-    public Room(int pk, String roomCode, int capacity, boolean bookable) {
+    ArrayList<Integer> bookableTimeSlotIndices;
+
+
+    public Room(int pk, String roomCode, int capacity, ArrayList<Integer> timeSlotIndices) {
         super(pk);
         this.roomCode = roomCode;
         if (capacity > 0) {
@@ -49,12 +53,19 @@ public class Room extends BaseModel {
         } else {
             throw new IllegalArgumentException("Capacity must be greater than 0");
         }
-        this.bookable = bookable;
+
+        this.bookableTimeSlotIndices = timeSlotIndices;
+
+        this.bookableTimeslots = new ArrayList<>();
         this.bookings = new ArrayList<>();
     }
 
+    public boolean bookable(TimeSlot timeSlot) {
+        return bookableTimeslots.contains(timeSlot);
+    }
+
     public boolean checkAvailability(TimeSlot timeSlot) {
-        if (!bookable) return false;
+        if (!bookable(timeSlot)) return false;
 
         // Check if there are no bookings with the current time slot
         boolean noBookings = true;
@@ -77,10 +88,36 @@ public class Room extends BaseModel {
     }
 
     public void addBooking(Booking booking) {
-        if (this.bookable) {
+        if (this.checkAvailability(booking.getTimeSlot())) {
             this.bookings.add(booking);
         } else {
             throw new IllegalArgumentException("This room is not bookable");
         }
+    }
+
+    public Integer[] getBookableTimeSlotIndices() {
+        return bookableTimeSlotIndices.toArray(new Integer[0]);
+    }
+
+    public String status(TimeSlot timeSlot) {
+        occupancy = getOccupancy(timeSlot);
+        if (occupancy == 0) return "EMPTY";
+        if (occupancy < capacity) return "AVAILABLE";
+        if (occupancy == capacity) return "FULL";
+        else return null;
+    }
+
+    public void setOccupancy(int occupancy) {
+        this.occupancy = occupancy;
+    }
+
+    public int getOccupancy(TimeSlot timeSlot) {
+        return (int) this.bookings.stream().filter(x -> x.getTimeSlot() == timeSlot).count();
+    }
+
+    public String toBookableRoomString(TimeSlot ts) {
+        return String.format(
+                "| %s | %s | %s | occupancy: %d |", ts.getFormattedStartTime(), this.status(ts),
+                this.getRoomCode(), this.getOccupancy(ts));
     }
 }

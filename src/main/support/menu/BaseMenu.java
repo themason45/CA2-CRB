@@ -1,5 +1,7 @@
 package main.support.menu;
 
+import main.support.BookingManager;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -20,9 +22,12 @@ public class BaseMenu {
     public boolean longFooter = false;
     public boolean blockOtherOptions = false;  // If an integer other than 0, or -1, is inputted, then block it
 
-    public BaseMenu(BaseMenu previousMenu, Scanner scanner) {
+    public BookingManager bookingManager;
+
+    public BaseMenu(BaseMenu previousMenu, Scanner scanner,BookingManager bookingManager) {
         this.previousMenu = previousMenu;
         this.scanner = scanner;
+        this.bookingManager = bookingManager;
     }
 
     /**
@@ -95,6 +100,8 @@ public class BaseMenu {
             case 0:
                 if (this.previousMenu != null) {
                     clearScreen();
+                    // Update the new menu with the new booking manager values
+                    this.previousMenu.bookingManager = this.bookingManager;
                     this.previousMenu.draw();
                 }
                 break;

@@ -13,10 +13,9 @@ import java.util.Scanner;
 import java.util.zip.DataFormatException;
 
 public class AddBookingMenu extends BaseCreateMenu {
-    private final BookingManager bookingManager;
 
     public AddBookingMenu(MainMenu previousMenu, Scanner scanner, BookingManager bookingManager) {
-        super(previousMenu, scanner);
+        super(previousMenu, scanner, bookingManager);
         this.bookingManager = bookingManager;
 
         this.list = bookingManager.getTimeSlotOptions();
@@ -49,6 +48,5 @@ public class AddBookingMenu extends BaseCreateMenu {
         } catch (IllegalArgumentException e) {
             this.error(e);
         }
-
     }
 }

@@ -8,9 +8,9 @@ import java.util.Scanner;
 
 public class BookableRoomList extends BaseListMenu {
     public BookableRoomList(MainMenu previousMenu, Scanner scanner, BookingManager bookingManager) {
-        super(previousMenu, scanner);
+        super(previousMenu, scanner, bookingManager);
 
-        this.list = bookingManager.bookableRooms();
+        this.list = bookingManager.formattedBookableRooms();
         this.title = "Bookable rooms";
     }
 

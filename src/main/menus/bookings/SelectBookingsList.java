@@ -13,7 +13,7 @@ public class SelectBookingsList extends BaseMenu {
     BookingManager bookingManager;
 
     public SelectBookingsList(MainMenu previousMenu, Scanner scanner, BookingManager bookingManager) {
-        super(previousMenu, scanner);
+        super(previousMenu, scanner, bookingManager);
         this.bookingManager = bookingManager;
 
         this.title = "Select which booking to list:";

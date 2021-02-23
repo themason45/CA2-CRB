@@ -1,13 +1,10 @@
 package main;
 
 import main.menus.MainMenu;
-import main.models.Assistant;
 import main.models.University;
 import main.support.BookingManager;
 import main.support.TimeSlot;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -65,7 +62,14 @@ public class BookingApp {
         // Create a BookingManager instance
         BookingManager bookingManager = new BookingManager(university);
 
+        // Create bookings at the start, and end of the week, so we can have a scheduled, and a complete one
+        TimeSlot lastTimeSlot = bookingManager.getTimeSlots().get(bookingManager.getTimeSlots().size() -1);
+        bookingManager.createBooking(lastTimeSlot, "sam@uok.ac.uk");
         bookingManager.createBooking(bookingManager.getTimeSlots().get(0), "sam@uok.ac.uk");
+
+        // Create a booking that lets us have a full room (Room 4 has a capacity of 1)
+        bookingManager.createBooking(bookingManager.getTimeSlots().get(9),"jim@uok.ac.uk",
+                bookingManager.getRooms().get(4), bookingManager.getAssistants().get(1));
 
         Scanner scanner = new Scanner(System.in);
 
@@ -81,15 +85,6 @@ public class BookingApp {
         return input.replaceAll("[\\[\\]]", "").split(" ");
     }
 
-
-    /**
-     * @param input String in the format [a b c d]
-     * @return Parsed input list into a Java array where each value is a double
-     */
-    public static ArrayList<Double> parseSublistAsDoubles(String input) {
-        String[] stringList = input.replaceAll("[\\[\\]]", "").split(" ");
-        return (ArrayList<Double>) Arrays.stream(stringList).map(Double::parseDouble).collect(Collectors.toList());
-    }
 
     /**
      * @param input String in the format [a b c d]

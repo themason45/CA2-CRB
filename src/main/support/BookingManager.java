@@ -6,6 +6,8 @@ import main.models.*;
 import main.support.menu.BaseMenuOption;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -23,17 +25,20 @@ import java.util.stream.Collectors;
  * Time slots should be 60 minutes apart
  */
 public class BookingManager {
-    private ArrayList<TimeSlot> timeSlots;
+    private final ArrayList<TimeSlot> timeSlots;
 
-    private ArrayList<Booking> bookings;
-    private University university;
+    private final ArrayList<Booking> bookings;
+    private final University university;
 
     public BookingManager(University university) {
         this.university = university;
 
         this.timeSlots = new ArrayList<>();
         this.bookings = new ArrayList<>();
+
+        // Generate timeslots, and allocate timeslots to the respective rooms
         generateTimeSlots();
+        generateRoomTimeslots();
     }
 
     private void generateTimeSlots() {
@@ -51,9 +56,23 @@ public class BookingManager {
         }
     }
 
+    private void generateRoomTimeslots() {
+        for (Room room : university.rooms) {
+            Integer[] indices = room.getBookableTimeSlotIndices();
+            for (Integer index : indices) {
+                room.bookableTimeslots.add(timeSlots.get(index));
+            }
+        }
+    }
+
     public Booking createBooking(TimeSlot timeSlot, String studentEmail) throws IllegalArgumentException {
         Room room = availableRooms(timeSlot).stream().findFirst().orElse(null);
         Assistant assistant = availableAssistants(timeSlot).stream().findFirst().orElse(null);
+
+        return createBooking(timeSlot, studentEmail, room, assistant);
+    }
+
+    public Booking createBooking(TimeSlot timeSlot, String studentEmail, Room room, Assistant assistant) throws IllegalArgumentException {
         if (room == null) {
             throw new IllegalArgumentException("No rooms available at this time slot");
         } else if (assistant == null) {
@@ -85,12 +104,45 @@ public class BookingManager {
         return university.rooms.stream().filter(x -> x.checkAvailability(timeSlot)).collect(Collectors.toCollection(ArrayList::new));
     }
 
+    public ArrayList<Room> bookableRooms(TimeSlot timeSlot) {
+        return university.rooms.stream().filter(x -> x.bookable(timeSlot)).collect(Collectors.toCollection(ArrayList::new));
+    }
+
     public ArrayList<TimeSlot> getTimeSlots() {
         return this.timeSlots;
     }
 
-    public ArrayList<Room> bookableRooms() {
-        return this.university.rooms.stream().filter(x -> x.bookable).collect(Collectors.toCollection(ArrayList::new));
+    public ArrayList<Room> allBookableRooms() {
+        ArrayList<Room> allBookableRooms = new ArrayList<>();
+
+        for (TimeSlot ts : this.getTimeSlots()) {
+            allBookableRooms.addAll(bookableRooms(ts));
+        }
+        return allBookableRooms;
+    }
+
+
+    public ArrayList<String> formattedBookableRooms() {
+        ArrayList<String> formattedBookableRooms = new ArrayList<>();
+
+        for (TimeSlot ts : this.getTimeSlots()) {
+            formattedBookableRooms.addAll(bookableRooms(ts).stream().map(room -> room.toBookableRoomString(ts))
+                    .collect(Collectors.toCollection(ArrayList::new)));
+        }
+        return formattedBookableRooms;
+    }
+
+    @SuppressWarnings("unused")
+    public Room addBookableRoom(Room room, LocalDate date, LocalTime time) {
+        int roomIndex = this.university.rooms.indexOf(room);
+
+        TimeSlot timeSlot = this.getTimeSlotForStartTime(TimeSlot.cleanDateTime(date, time));
+        System.out.println(timeSlot);
+        room.bookableTimeslots.add(timeSlot);
+
+        this.university.rooms.set(roomIndex, room);
+
+        return room;
     }
 
     public ArrayList<Assistant> getAssistants() {
@@ -169,6 +221,14 @@ public class BookingManager {
     public ArrayList<BaseMenuOption> getTimeSlotOptions() {
         return this.getAvailableTimeSlots().stream().map(x -> new BaseMenuOption(x.getFormattedStartTime(),
                 this.getClass(), "createBooking", x)).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public TimeSlot getTimeSlotForStartTime(LocalDateTime dateTime) {
+        return this.getTimeSlots().stream().filter(x -> x.start.isEqual(dateTime)).findFirst().orElse(null);
+    }
+
+    public ArrayList<Room> getRooms() {
+        return university.rooms;
     }
 
 }

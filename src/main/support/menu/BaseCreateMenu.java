@@ -1,5 +1,7 @@
 package main.support.menu;
 
+import main.support.BookingManager;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
@@ -7,8 +9,8 @@ import java.util.Scanner;
 public class BaseCreateMenu extends BaseListMenu {
     protected String instructions = "";
 
-    public BaseCreateMenu(BaseMenu previousMenu, Scanner scanner) {
-        super(previousMenu, scanner);
+    public BaseCreateMenu(BaseMenu previousMenu, Scanner scanner, BookingManager bookingManager) {
+        super(previousMenu, scanner, bookingManager);
         blockOtherOptions = true;
     }
 

@@ -10,10 +10,9 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class BookingsList extends BaseListMenu {
-    BookingManager bookingManager;
 
     public BookingsList(MainMenu previousMenu, Scanner scanner, BookingManager bookingManager, Integer status) {
-        super(previousMenu, scanner);
+        super(previousMenu, scanner, bookingManager);
         this.bookingManager = bookingManager;
         this.fullTitle = "";
 
@@ -24,12 +23,12 @@ public class BookingsList extends BaseListMenu {
             }
             case 1 -> {
                 title = "scheduled bookings";
-                list = bookingManager.getBookings().stream().filter(Booking::isCompleted).
+                list = bookingManager.getBookings().stream().filter(x -> !x.isCompleted()).
                         collect(Collectors.toCollection(ArrayList::new));
             }
             case 2 -> {
                 title = "completed bookings";
-                list = bookingManager.getBookings().stream().filter(x -> !x.isCompleted()).
+                list = bookingManager.getBookings().stream().filter(Booking::isCompleted).
                         collect(Collectors.toCollection(ArrayList::new));
             }
         }

@@ -12,10 +12,9 @@ import java.util.Scanner;
 import java.util.zip.DataFormatException;
 
 public class AddAssistantsOnShitMenu extends BaseCreateMenu {
-    BookingManager bookingManager;
 
     public AddAssistantsOnShitMenu(MainMenu previousMenu, Scanner scanner, BookingManager bookingManager) {
-        super(previousMenu, scanner);
+        super(previousMenu, scanner, bookingManager);
         this.bookingManager = bookingManager;
 
         this.list = bookingManager.tsAssistantOptionMap();
@@ -29,7 +28,7 @@ public class AddAssistantsOnShitMenu extends BaseCreateMenu {
         if (split.length != 2) try {
             throw new DataFormatException("Data inputted here must be in the format ID dd/mm/yy");
         } catch (DataFormatException e) {
-            e.printStackTrace();  // TODO: Add a description of the error, instead of this
+            this.error(e);
         }
 
         int listIndex = Integer.parseInt(split[0]);
@@ -40,7 +39,7 @@ public class AddAssistantsOnShitMenu extends BaseCreateMenu {
         try {
             option.executeOnInstance(bookingManager, LocalDate.parse(split[1], DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         } catch (Exception e) {
-            e.printStackTrace();
+            this.error(e);
         }
     }
 }

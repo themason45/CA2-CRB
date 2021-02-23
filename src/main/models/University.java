@@ -74,7 +74,8 @@ public class University extends BaseModel {
      */
     public void populateRooms(String[][] csv) {
         for (String[] row : csv) {
-            Room room = new Room(Integer.parseInt(row[0]), row[1], Integer.parseInt(row[2]), Boolean.parseBoolean(row[4]));
+            Room room = new Room(Integer.parseInt(row[0]), row[1], Integer.parseInt(row[2]),
+                    BookingApp.parseSublistAsInts(row[5]));
             this.addRoom(room);
         }
     }
