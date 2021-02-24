@@ -1,7 +1,9 @@
 package support;
 
 import menus.assistants.AddAssistantsOnShitMenu;
-import models.*;
+import models.Assistant;
+import models.Room;
+import models.University;
 import support.menu.BaseMenuOption;
 
 import java.time.LocalDate;
@@ -25,23 +27,21 @@ import java.util.stream.Collectors;
  * <p>
  * Time slots should be 60 minutes apart
  */
-public class BookingManager {
-    private final ArrayList<TimeSlot> timeSlots;
-
-    private ArrayList<Booking> bookings;
-    private final University university;
+public class BookingManager extends BaseBookingManager {
 
     public BookingManager(University university) {
-        this.university = university;
-
-        this.timeSlots = new ArrayList<>();
-        this.bookings = new ArrayList<>();
-
+        super(university);
         // Generate timeslots, and allocate timeslots to the respective rooms
         generateTimeSlots();
         generateRoomTimeslots();
     }
 
+    // Time slot related methods
+
+    /**
+     * Generate a list of timeSlots for n weeks ahead, with the correct number of timeslots per day,
+     * this can all be changed in the <i>config.properties</i> file.
+     */
     private void generateTimeSlots() {
         int weeksAhead = Integer.parseInt((String) Support.appProps().get("weeks.ahead"));
         int dow = LocalDate.now().getDayOfWeek().getValue();
@@ -57,6 +57,10 @@ public class BookingManager {
         }
     }
 
+    /**
+     * This takes the preset indices for time slots (defined in the CSV files), and adds the corresponding
+     * time slot to the room's bookable timeslots
+     */
     private void generateRoomTimeslots() {
         for (Room room : university.rooms) {
             Integer[] indices = room.getBookableTimeSlotIndices();
@@ -66,210 +70,13 @@ public class BookingManager {
         }
     }
 
-
-    public Booking createBooking(TimeSlot timeSlot, String studentEmail) throws IllegalArgumentException {
-        return createBooking(timeSlot, studentEmail, false);
-    }
-
-    public Booking createBooking(TimeSlot timeSlot, String studentEmail, boolean complete) throws IllegalArgumentException {
-        Room room = availableRooms(timeSlot).stream().findFirst().orElse(null);
-        Assistant assistant = availableAssistants(timeSlot).stream().findFirst().orElse(null);
-
-        return createBooking(timeSlot, studentEmail, room, assistant, complete);
-    }
-
-    public void createBooking(TimeSlot timeSlot, String studentEmail, Room room, Assistant assistant) throws IllegalArgumentException {
-        createBooking(timeSlot, studentEmail, room, assistant, false);
-    }
-
-    public Booking createBooking(TimeSlot timeSlot, String studentEmail, Room room, Assistant assistant, boolean complete) throws IllegalArgumentException {
-        if (room == null) {
-            throw new IllegalArgumentException("No rooms available at this time slot");
-        } else if (assistant == null) {
-            throw new IllegalArgumentException("No assistants available at this time slot");
-        }
-
-        ModelWrapper<Booking> bookingModelWrapper = new ModelWrapper<>();
-        Booking booking = new Booking(bookingModelWrapper.nextPk(bookings), timeSlot, room, assistant, studentEmail);
-        if (complete) booking.completeTest();
-
-        // Add bookings to the room, and assistant, so that they can track back along the relation
-        room.addBooking(booking);
-        assistant.addBooking(booking);
-
-        // Update the existing lists
-        new ModelWrapper<Room>().updateArr(university.rooms, room);
-        new ModelWrapper<Assistant>().updateArr(university.assistants, assistant);
-
-        // Add this booking the the manager's list of bookings
-        this.bookings.add(booking);
-
-        return booking;
-    }
-
-    public ArrayList<Assistant> availableAssistants(TimeSlot timeSlot) {
-        return university.assistants.stream().filter(x -> x.checkAvailability(timeSlot)).collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    public ArrayList<Assistant> assistantsOnShift(TimeSlot timeSlot) {
-        return university.assistants.stream().filter(x -> x.checkOnShift(timeSlot)).collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    public ArrayList<Room> availableRooms(TimeSlot timeSlot) {
-        return university.rooms.stream().filter(x -> x.checkAvailability(timeSlot)).collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    public ArrayList<Room> bookableRooms(TimeSlot timeSlot) {
-        return university.rooms.stream().filter(x -> x.bookable(timeSlot)).collect(Collectors.toCollection(ArrayList::new));
-    }
-
+    /**
+     * @return An arraylist of {@link TimeSlot}s for the current instance
+     */
     public ArrayList<TimeSlot> getTimeSlots() {
         return this.timeSlots;
     }
 
-    public ArrayList<BaseMenuOption> deleteBookableRoomOptions() {
-        ArrayList<BaseMenuOption> deleteBookableRoomOptions = new ArrayList<>();
-
-        for (TimeSlot ts : this.getTimeSlots()) {
-            deleteBookableRoomOptions.addAll(bookableRooms(ts).stream().filter(x -> x.status(ts).equals("EMPTY"))
-                    .map(room -> new BaseMenuOption(room.toBookableRoomString(ts), BookingManager.class,
-                            "removeBookableRoom", room, ts))
-                    .collect(Collectors.toCollection(ArrayList::new)));
-        }
-        return deleteBookableRoomOptions;
-    }
-
-    public ArrayList<String> formattedBookableRooms() {
-        ArrayList<String> formattedBookableRooms = new ArrayList<>();
-
-        for (TimeSlot ts : this.getTimeSlots()) {
-            formattedBookableRooms.addAll(bookableRooms(ts).stream().map(room -> room.toBookableRoomString(ts))
-                    .collect(Collectors.toCollection(ArrayList::new)));
-        }
-        return formattedBookableRooms;
-    }
-
-    @SuppressWarnings("unused")
-    public Room addBookableRoom(Room room, LocalDate date, LocalTime time) {
-        int roomIndex = this.university.rooms.indexOf(room);
-
-        TimeSlot timeSlot = this.getTimeSlotForStartTime(TimeSlot.cleanDateTime(date, time));
-        room.bookableTimeslots.add(timeSlot);
-
-        this.university.rooms.set(roomIndex, room);
-
-        return room;
-    }
-
-    @SuppressWarnings("unused")
-    public void removeBookableRoom(Room room, TimeSlot timeSlot) {
-        room.bookableTimeslots.remove(timeSlot);
-
-        university.rooms = new ModelWrapper<Room>().updateArr(university.rooms, room);
-    }
-
-    public ArrayList<Assistant> getAssistants() {
-        return university.assistants;
-    }
-
-    /**
-     * @return An ArrayList of {@link BaseMenuOption}s which combine Assistants, and Time slots, and have the function
-     * {@link BookingManager#addToShift(Assistant, LocalDate)}, with the local date already filled
-     */
-    public ArrayList<BaseMenuOption> tsAssistantOptionMap() {
-        return tsAssistantOptionMap(true);
-    }
-
-    /**
-     * @return An ArrayList of {@link BaseMenuOption}s which combine Assistants, and Time slots, and have the function
-     * {@link BookingManager#addToShift(Assistant, LocalDate)}, with the local date already filled
-     */
-    public ArrayList<BaseMenuOption> tsAssistantOptionMap(boolean creation) {
-        ArrayList<BaseMenuOption> ol = new ArrayList<>();
-
-        for (TimeSlot ts : this.getTimeSlots()) {
-            ArrayList<Assistant> assistants = this.availableAssistants(ts);
-
-            ArrayList<BaseMenuOption> mapped = assistants.stream().map(x ->
-                    creation ? new BaseMenuOption(String.format("%s | %s | %s",
-                            ts.getFormattedStartTime(), x.checkAvailability(ts) ? "FREE" : "BUSY", x.getEmail()),
-                            BookingManager.class,"addToShift", x) :
-                            new BaseMenuOption(String.format("%s | %s | %s",
-                                    ts.getFormattedStartTime(), x.checkAvailability(ts) ? "FREE" : "BUSY", x.getEmail()),
-                                    BookingManager.class,"removeFromShift", x, ts)
-            ).collect(Collectors.toCollection(ArrayList::new));
-            ol.addAll(mapped);
-        }
-
-        return ol;
-    }
-
-    /**
-     * Maps together the assistants and time slots in order to display them in the
-     * {@link menus.assistants.AssistantsOnShiftList} menu.
-     *
-     * @return An ArrayList of Strings which combine Assistants, and Time slots
-     */
-    public ArrayList<String> tsAssistantMap() {
-        ArrayList<String> ol = new ArrayList<>();
-
-        for (TimeSlot ts : this.getTimeSlots()) {
-            ArrayList<Assistant> assistants = this.availableAssistants(ts);
-
-            ArrayList<String> mapped = assistants.stream().map(x ->
-                    String.format("%s | %s | %s", ts.getFormattedStartTime(), x.checkAvailability(ts) ? "FREE" : "BUSY",
-                            x.getEmail())).collect(Collectors.toCollection(ArrayList::new));
-            ol.addAll(mapped);
-        }
-        return ol;
-    }
-
-    /**
-     * This method is invoked by {@link AddAssistantsOnShitMenu#performCreation(String)}.
-     *
-     * @param assistant The assistant to be put on shift
-     */
-    @SuppressWarnings("unused")
-    public void addToShift(Assistant assistant, LocalDate localDate) {
-        int dow = localDate.getDayOfWeek().getValue();
-        assistant.addDayActive(dow);
-
-        university.assistants = new ModelWrapper<Assistant>().updateArr(university.assistants, assistant);
-    }
-
-    @SuppressWarnings("unused")
-    public void removeFromShift(Assistant assistant, TimeSlot timeSlot) {
-        int dow = timeSlot.start.getDayOfWeek().getValue();
-        assistant.removeDayActive(dow);
-
-        university.assistants = new ModelWrapper<Assistant>().updateArr(university.assistants, assistant);
-    }
-
-    public ArrayList<Booking> getBookings() {
-        return this.bookings;
-    }
-
-
-    @SuppressWarnings("unused")
-    public void deleteBooking(Booking booking) throws NullPointerException {
-        this.bookings.remove(booking);
-    }
-
-    public ArrayList<Booking> getScheduledBookings() {
-        return getBookings().stream().filter(x -> !x.getIsCompleted()).collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    public ArrayList<BaseMenuOption> completeBookingOptions() {
-        return this.getScheduledBookings().stream().map(booking ->
-                new BaseMenuOption(booking.toString(), BookingManager.class, "completeBooking", booking)
-        ).collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    @SuppressWarnings("unused")
-    public void completeBooking(Booking booking) {
-        booking.completeTest();
-        bookings = new ModelWrapper<Booking>().updateArr(bookings, booking);
-    }
 
     /**
      * @return An ArrayList of timeslots which have available assistants, and rooms
@@ -289,10 +96,176 @@ public class BookingManager {
                 this.getClass(), "createBooking", x)).collect(Collectors.toCollection(ArrayList::new));
     }
 
+    /**
+     * This function does not rely on direct user input, first the data is cleaned.
+     * It is used in the process for converting user inputted Dates, and Times.
+     * <br/>
+     * See {@link TimeSlot#cleanDateTime(LocalDate, LocalTime)} for how it is cleaned up ready for compatible
+     * searching
+     * 
+     * @param dateTime Start time to match a timeSlot to
+     * @return The time slot with the matching start time
+     */
     public TimeSlot getTimeSlotForStartTime(LocalDateTime dateTime) {
         return this.getTimeSlots().stream().filter(x -> x.start.isEqual(dateTime)).findFirst().orElse(null);
     }
 
+    // Bookable room related methods
+
+    /**
+     * Generates the arraylist of {@link support.menu.BaseMenuOption} which call the
+     * {@link #removeBookableRoom(Room, TimeSlot)} function on a, usually given, instance
+     *
+     * @return An ArrayList of {@link support.menu.BaseMenuOption} for deleting bookable rooms
+     */
+    public ArrayList<BaseMenuOption> deleteBookableRoomOptions() {
+        ArrayList<BaseMenuOption> deleteBookableRoomOptions = new ArrayList<>();
+
+        for (TimeSlot ts : this.getTimeSlots()) {
+            deleteBookableRoomOptions.addAll(bookableRooms(ts).stream().filter(x -> x.status(ts).equals("EMPTY"))
+                    .map(room -> new BaseMenuOption(room.toBookableRoomString(ts), BookingManager.class,
+                            "removeBookableRoom", room, ts))
+                    .collect(Collectors.toCollection(ArrayList::new)));
+        }
+        return deleteBookableRoomOptions;
+    }
+
+    /**
+     * @return An ArrayList of strings with the formatted details of the room in a bookable way
+     */
+    public ArrayList<String> formattedBookableRooms() {
+        ArrayList<String> formattedBookableRooms = new ArrayList<>();
+
+        for (TimeSlot ts : this.getTimeSlots()) {
+            formattedBookableRooms.addAll(bookableRooms(ts).stream().map(room -> room.toBookableRoomString(ts))
+                    .collect(Collectors.toCollection(ArrayList::new)));
+        }
+        return formattedBookableRooms;
+    }
+
+    /**
+     * @param room The room to make bookable
+     * @param date The date to make the room bookable on
+     * @param time The time to make the room bookable at
+     * @return The updated room, note that the given instance's room list is also updated
+     */
+    @SuppressWarnings("unused")
+    public Room addBookableRoom(Room room, LocalDate date, LocalTime time) {
+        int roomIndex = this.university.rooms.indexOf(room);
+
+        TimeSlot timeSlot = this.getTimeSlotForStartTime(TimeSlot.cleanDateTime(date, time));
+        room.bookableTimeslots.add(timeSlot);
+
+        this.university.rooms.set(roomIndex, room);
+
+        return room;
+    }
+
+    /**
+     * @param room The room to make un-bookable
+     * @param timeSlot The timeslot to remove the bookable status from
+     */
+    @SuppressWarnings("unused")
+    public void removeBookableRoom(Room room, TimeSlot timeSlot) {
+        room.bookableTimeslots.remove(timeSlot);
+
+        university.rooms = new ModelWrapper<Room>().updateArr(university.rooms, room);
+    }
+
+    // Assistant related methods
+
+    /**
+     * @return An ArrayList of the current instance's {@link Assistant}s.
+     */
+    public ArrayList<Assistant> getAssistants() {
+        return university.assistants;
+    }
+
+    /**
+     * Overflow for {@link #tsAssistantOptionMap(boolean)}, where creation is true
+     *
+     * @return An ArrayList of {@link BaseMenuOption}s which combine Assistants, and Time slots, and have the function
+     * {@link BookingManager#addToShift(Assistant, LocalDate)}, with the local date already filled
+     */
+    public ArrayList<BaseMenuOption> tsAssistantOptionMap() {
+        return tsAssistantOptionMap(true);
+    }
+
+    /**
+     * @return An ArrayList of {@link BaseMenuOption}s which combine Assistants, and Time slots, and have the function
+     * {@link BookingManager#addToShift(Assistant, LocalDate)}, with the local date already filled
+     */
+    public ArrayList<BaseMenuOption> tsAssistantOptionMap(boolean creation) {
+        ArrayList<BaseMenuOption> ol = new ArrayList<>();
+
+        for (TimeSlot ts : this.getTimeSlots()) {
+            ArrayList<Assistant> assistants = this.availableAssistants(ts);
+
+            ArrayList<BaseMenuOption> mapped = assistants.stream().map(x ->
+                    creation ?
+                            new BaseMenuOption(x.onShiftDescriptionString(ts),
+                                    BookingManager.class, "addToShift", x) :
+                            new BaseMenuOption(x.onShiftDescriptionString(ts),
+                                    BookingManager.class, "removeFromShift", x, ts)
+            ).collect(Collectors.toCollection(ArrayList::new));
+            ol.addAll(mapped);
+        }
+
+        return ol;
+    }
+
+    /**
+     * Maps together the assistants and time slots in order to display them in the
+     * {@link menus.assistants.AssistantsOnShiftList} menu.
+     *
+     * @return An ArrayList of Strings which combine Assistants, and Time slots
+     */
+    public ArrayList<String> tsAssistantMap() {
+        ArrayList<String> ol = new ArrayList<>();
+
+        for (TimeSlot ts : this.getTimeSlots()) {
+            ArrayList<Assistant> assistants = this.availableAssistants(ts);
+
+            ArrayList<String> mapped = assistants.stream().map(x -> x.onShiftDescriptionString(ts))
+                    .collect(Collectors.toCollection(ArrayList::new));
+            ol.addAll(mapped);
+        }
+        return ol;
+    }
+
+    /**
+     * This method is invoked by {@link AddAssistantsOnShitMenu#performCreation(String)}.
+     * Note that shifts for Assistants reoccur weekly, so removing them from shift this week, will add them to
+     * all subsequent weeks. Only the day of the week is stored (0 = Monday).
+     *
+     * @param assistant The assistant to be put on shift
+     */
+    @SuppressWarnings("unused")
+    public void addToShift(Assistant assistant, LocalDate localDate) {
+        int dow = localDate.getDayOfWeek().getValue();
+        assistant.addDayActive(dow);
+
+        university.assistants = new ModelWrapper<Assistant>().updateArr(university.assistants, assistant);
+    }
+
+    /**
+     * Note that shifts for Assistants reoccur weekly, so removing them from shift this week, will remove them from
+     * all subsequent weeks. Only the day of the week is stored (0 = Monday).
+     *
+     * @param assistant The assistant to take off shift
+     * @param timeSlot The timeslot to remove them from
+     */
+    @SuppressWarnings("unused")
+    public void removeFromShift(Assistant assistant, TimeSlot timeSlot) {
+        int dow = timeSlot.start.getDayOfWeek().getValue();
+        assistant.removeDayActive(dow);
+
+        university.assistants = new ModelWrapper<Assistant>().updateArr(university.assistants, assistant);
+    }
+
+    /**
+     * @return An ArrayList of the current instance's {@link Room}s.
+     */
     public ArrayList<Room> getRooms() {
         return university.rooms;
     }

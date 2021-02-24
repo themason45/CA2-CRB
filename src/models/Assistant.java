@@ -135,4 +135,9 @@ public class Assistant extends BaseModel {
             daysActive = copy;
         }
     }
+
+    public String onShiftDescriptionString(TimeSlot timeSlot) {
+        return String.format("%s | %s | %s", timeSlot.getFormattedStartTime(), this.checkAvailability(timeSlot) ? "FREE" : "BUSY",
+                this.getEmail());
+    }
 }
