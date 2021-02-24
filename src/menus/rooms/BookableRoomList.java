@@ -11,7 +11,7 @@ public class BookableRoomList extends BaseListMenu {
         super(previousMenu, scanner, bookingManager);
 
         this.list = bookingManager.formattedBookableRooms();
-        this.title = "Bookable rooms";
+        this.title = "bookable rooms";
     }
 
     @Override

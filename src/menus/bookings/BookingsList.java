@@ -22,12 +22,12 @@ public class BookingsList extends BaseListMenu {
             }
             case 1 -> {
                 title = "scheduled bookings";
-                list = bookingManager.getBookings().stream().filter(x -> !x.isCompleted()).
+                list = bookingManager.getBookings().stream().filter(x -> !x.getIsCompleted()).
                         collect(Collectors.toCollection(ArrayList::new));
             }
             case 2 -> {
                 title = "completed bookings";
-                list = bookingManager.getBookings().stream().filter(Booking::isCompleted).
+                list = bookingManager.getBookings().stream().filter(Booking::getIsCompleted).
                         collect(Collectors.toCollection(ArrayList::new));
             }
         }

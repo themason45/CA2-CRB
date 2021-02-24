@@ -2,6 +2,7 @@ package support.menu;
 
 import support.BookingManager;
 
+import javax.swing.text.html.Option;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
  */
 public class BaseMenu {
     public String title;  // Eg: Manage Bookings
+    public String subTitle = "";  // Eg: Manage Bookings
     public ArrayList<BaseMenuOption> options;
 
     public BaseMenu previousMenu;
@@ -27,7 +29,7 @@ public class BaseMenu {
 
     public BookingManager bookingManager;
 
-    public BaseMenu(BaseMenu previousMenu, Scanner scanner,BookingManager bookingManager) {
+    public BaseMenu(BaseMenu previousMenu, Scanner scanner, BookingManager bookingManager) {
         this.previousMenu = previousMenu;
         this.scanner = scanner;
         this.bookingManager = bookingManager;
@@ -61,6 +63,7 @@ public class BaseMenu {
                 printStream.printf("\n%s", option.title);
             }
         }
+        if (subTitle.length() > 0) printStream.printf("\n%s\n", subTitle);
         printStream.println();  // Add trailing new line
 
         if (longFooter) {
@@ -71,9 +74,9 @@ public class BaseMenu {
                     """);
         } else {
             printStream.print("""
-                0. Back to main menu.
-                -1. Quit application.
-                """);
+                    0. Back to main menu.
+                    -1. Quit application.
+                    """);
         }
 
         return byteArrayOutputStream;
@@ -117,10 +120,21 @@ public class BaseMenu {
                 BaseMenuOption option = decodeOption(optionNumber);
                 if (option.methodIdentifier.equals(BaseMenuOption.REDRAW("").methodIdentifier)) {
                     this.redrawWithMessage((String) option.funcArgs[0]);
-                } else {
+                } else if (option instanceof SegueOption) {
                     option.execute();
+                    this.postExecute(option);
+                } else {
+                    try {
+                        option.executeOnInstance(bookingManager);
+                        this.postExecute(option);
+                    } catch (Exception e) {
+                        this.error(e);
+                    }
                 }
         }
+    }
+
+    public void postExecute(BaseMenuOption option) {
     }
 
     public void postDraw(boolean skipLine) {

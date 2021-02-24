@@ -26,12 +26,8 @@ public class BaseListMenu extends BaseMenu {
 
     public PrintStream renderList(PrintStream stream) {
         int i = offset;
-
-        if (this.fullTitle != null) {
-            stream.println(fullTitle);
-        } else {
-            stream.printf("List of %s:\n", title);
-        }
+        title = title.endsWith("s") ? title : String.format("%ss", title);
+        stream.printf("List of %s:\n", title);
 
         if (list.isEmpty()) {
             stream.println("\tEmpty");

@@ -26,6 +26,8 @@ public class Booking extends BaseModel {
     private Assistant assistant;
     private String studentEmail;
 
+    private boolean isCompleted;
+
     public Booking(int pk, TimeSlot timeSlot, Room room, Assistant assistant, String studentEmail) {
         super(pk);
         this.timeSlot = timeSlot;
@@ -39,7 +41,7 @@ public class Booking extends BaseModel {
     }
 
     public String getStatus() {
-        return timeSlot.hasElapsed() ? "COMPLETED" : "SCHEDULED";
+        return isCompleted ? "COMPLETED" : "SCHEDULED";
     }
 
     @Override
@@ -49,7 +51,11 @@ public class Booking extends BaseModel {
                 room.getRoomCode(), studentEmail);
     }
 
-    public Boolean isCompleted() {
-        return (this.getStatus().equals("COMPLETED"));
+    public Boolean getIsCompleted() {
+        return isCompleted;
+    }
+
+    public void completeTest() {
+        this.isCompleted = true;
     }
 }

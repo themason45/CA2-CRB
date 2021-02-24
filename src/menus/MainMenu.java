@@ -4,6 +4,7 @@ import menus.assistants.AddAssistantsOnShitMenu;
 import menus.assistants.AssistantsOnShiftList;
 import menus.assistants.DeleteAssistantOnShiftMenu;
 import menus.bookings.AddBookingMenu;
+import menus.bookings.ConcludeBookingMenu;
 import menus.bookings.DeleteBookingMenu;
 import menus.rooms.AddBookableRoomMenu;
 import menus.rooms.BookableRoomList;
@@ -44,6 +45,7 @@ public class MainMenu extends BaseMenu {
         options.add(new SegueOption("List", SelectBookingsList.class, this, scanner, bookingManager));
         options.add(new SegueOption("Add", AddBookingMenu.class, this, scanner, bookingManager));
         options.add(new SegueOption("Delete", DeleteBookingMenu.class, this, scanner, bookingManager));
+        options.add(new SegueOption("Conclude", ConcludeBookingMenu.class, this, scanner, bookingManager));
     }
 
     public void setBookingManager(BookingManager bookingManager) {

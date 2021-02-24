@@ -1,10 +1,13 @@
 package menus.bookings;
 
 import menus.MainMenu;
+import models.Booking;
 import support.BookingManager;
 import support.menu.BaseDeleteMenu;
 
+import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class DeleteBookingMenu extends BaseDeleteMenu {
     public DeleteBookingMenu(MainMenu previousMenu, Scanner scanner, BookingManager bookingManager) {
@@ -15,7 +18,12 @@ public class DeleteBookingMenu extends BaseDeleteMenu {
 
         this.methodName = "deleteBooking";
 
-        this.list = bookingManager.getBookings();
+        this.list = bookingManager.getScheduledBookings();
+    }
+
+    @Override
+    public void postDelete() {
+        this.list = bookingManager.getScheduledBookings();
     }
 
     @Override

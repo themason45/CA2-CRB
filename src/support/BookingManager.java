@@ -8,7 +8,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.stream.Collectors;
 
 /**
@@ -27,7 +26,7 @@ import java.util.stream.Collectors;
 public class BookingManager {
     private final ArrayList<TimeSlot> timeSlots;
 
-    private final ArrayList<Booking> bookings;
+    private ArrayList<Booking> bookings;
     private final University university;
 
     public BookingManager(University university) {
@@ -65,14 +64,23 @@ public class BookingManager {
         }
     }
 
+
     public Booking createBooking(TimeSlot timeSlot, String studentEmail) throws IllegalArgumentException {
+        return createBooking(timeSlot, studentEmail, false);
+    }
+
+    public Booking createBooking(TimeSlot timeSlot, String studentEmail, boolean complete) throws IllegalArgumentException {
         Room room = availableRooms(timeSlot).stream().findFirst().orElse(null);
         Assistant assistant = availableAssistants(timeSlot).stream().findFirst().orElse(null);
 
-        return createBooking(timeSlot, studentEmail, room, assistant);
+        return createBooking(timeSlot, studentEmail, room, assistant, complete);
     }
 
-    public Booking createBooking(TimeSlot timeSlot, String studentEmail, Room room, Assistant assistant) throws IllegalArgumentException {
+    public void createBooking(TimeSlot timeSlot, String studentEmail, Room room, Assistant assistant) throws IllegalArgumentException {
+        createBooking(timeSlot, studentEmail, room, assistant, false);
+    }
+
+    public Booking createBooking(TimeSlot timeSlot, String studentEmail, Room room, Assistant assistant, boolean complete) throws IllegalArgumentException {
         if (room == null) {
             throw new IllegalArgumentException("No rooms available at this time slot");
         } else if (assistant == null) {
@@ -81,6 +89,7 @@ public class BookingManager {
 
         ModelWrapper<Booking> bookingModelWrapper = new ModelWrapper<>();
         Booking booking = new Booking(bookingModelWrapper.nextPk(bookings), timeSlot, room, assistant, studentEmail);
+        if (complete) booking.completeTest();
 
         // Add bookings to the room, and assistant, so that they can track back along the relation
         room.addBooking(booking);
@@ -242,6 +251,22 @@ public class BookingManager {
     @SuppressWarnings("unused")
     public void deleteBooking(Booking booking) throws NullPointerException {
         this.bookings.remove(booking);
+    }
+
+    public ArrayList<Booking> getScheduledBookings() {
+        return getBookings().stream().filter(x -> !x.getIsCompleted()).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public ArrayList<BaseMenuOption> completeBookingOptions() {
+        return this.getScheduledBookings().stream().map(booking ->
+                new BaseMenuOption(booking.toString(), BookingManager.class, "completeBooking", booking)
+        ).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    @SuppressWarnings("unused")
+    public void completeBooking(Booking booking) {
+        booking.completeTest();
+        bookings = new ModelWrapper<Booking>().updateArr(bookings, booking);
     }
 
     /**

@@ -36,9 +36,8 @@ public class BookingApp {
         // Create a BookingManager instance
         BookingManager bookingManager = new BookingManager(university);
 
-        // Create bookings at the start, and end of the week, so we can have a scheduled, and a complete one
         TimeSlot lastTimeSlot = bookingManager.getTimeSlots().get(bookingManager.getTimeSlots().size() -1);
-        bookingManager.createBooking(lastTimeSlot, "sam@uok.ac.uk");
+        bookingManager.createBooking(lastTimeSlot, "sam@uok.ac.uk", true);
         bookingManager.createBooking(bookingManager.getTimeSlots().get(0), "sam@uok.ac.uk");
 
         // Create a booking that lets us have a full room (Room 4 has a capacity of 1)
