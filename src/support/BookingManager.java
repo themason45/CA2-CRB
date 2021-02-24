@@ -10,6 +10,8 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+//TODO: Tidy this bloody file up
+
 /**
  * This creates bookings in rooms, for a given university
  *
