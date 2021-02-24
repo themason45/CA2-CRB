@@ -19,6 +19,9 @@ public class BaseMenu {
     public BaseMenu previousMenu;
     public Scanner scanner;
 
+    public BaseMenuOption defaultOption;
+    public boolean useDefault = false;
+
     public boolean longFooter = false;
     public boolean blockOtherOptions = false;  // If an integer other than 0, or -1, is inputted, then block it
 
@@ -28,6 +31,8 @@ public class BaseMenu {
         this.previousMenu = previousMenu;
         this.scanner = scanner;
         this.bookingManager = bookingManager;
+
+        this.defaultOption = BaseMenuOption.NOOP;
     }
 
     /**
@@ -45,16 +50,15 @@ public class BaseMenu {
                 %s
 
                 Please, enter the number to select your option:
-                                
                 """, title);
 
         int i = 1;
         for (BaseMenuOption option : options) {
             if (option.selectable) {
-                printStream.printf("\t %d.\t %s\n", i, option.title);
+                printStream.printf("\n\t %d.\t %s", i, option.title);
                 i++;
             } else {
-                printStream.println(option.title);
+                printStream.printf("\n%s", option.title);
             }
         }
         printStream.println();  // Add trailing new line
@@ -82,6 +86,9 @@ public class BaseMenu {
     protected BaseMenuOption decodeOption(int input) {
         ArrayList<BaseMenuOption> optionList = this.options.stream().filter(x -> x.selectable).
                 collect(Collectors.toCollection(ArrayList::new));
+
+        if (input > optionList.size() & useDefault) return this.defaultOption;
+
         return optionList.get(input - 1);
     }
 
@@ -91,7 +98,6 @@ public class BaseMenu {
      * @param optionNumber The input number from the user
      */
     public void selectOption(int optionNumber) throws IllegalArgumentException {
-        // TODO: Add checks for a valid input
 
         switch (optionNumber) {
             case -1:
@@ -106,7 +112,7 @@ public class BaseMenu {
                 }
                 break;
             default:
-                if (blockOtherOptions) throw new IllegalArgumentException("This option is not valid");
+                if (blockOtherOptions) throw new IllegalArgumentException("That option is not valid");
 
                 BaseMenuOption option = decodeOption(optionNumber);
                 if (option.methodIdentifier.equals(BaseMenuOption.REDRAW("").methodIdentifier)) {

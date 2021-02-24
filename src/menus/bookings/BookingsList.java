@@ -14,7 +14,6 @@ public class BookingsList extends BaseListMenu {
     public BookingsList(MainMenu previousMenu, Scanner scanner, BookingManager bookingManager, Integer status) {
         super(previousMenu, scanner, bookingManager);
         this.bookingManager = bookingManager;
-        this.fullTitle = "";
 
         switch (status) {
             case 0 -> {

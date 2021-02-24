@@ -23,5 +23,8 @@ public class SelectBookingsList extends BaseMenu {
                 scanner, bookingManager, 1));
         options.add(new SegueOption("Only bookings status:COMPLETED", BookingsList.class, this.previousMenu,
                 scanner, bookingManager, 2));
+
+        this.defaultOption = options.get(0);
+        this.useDefault = true;
     }
 }

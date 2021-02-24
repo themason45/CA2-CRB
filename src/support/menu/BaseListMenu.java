@@ -26,6 +26,13 @@ public class BaseListMenu extends BaseMenu {
 
     public PrintStream renderList(PrintStream stream) {
         int i = offset;
+
+        if (this.fullTitle != null) {
+            stream.println(fullTitle);
+        } else {
+            stream.printf("List of %s:\n", title);
+        }
+
         if (list.isEmpty()) {
             stream.println("\tEmpty");
         } else {
@@ -34,6 +41,7 @@ public class BaseListMenu extends BaseMenu {
                 i++;
             }
         }
+        stream.println();
         return stream;
     }
 
@@ -48,14 +56,8 @@ public class BaseListMenu extends BaseMenu {
         PrintStream printStream = new PrintStream(byteArrayOutputStream);
 
         printStream.print("University of Knowledge - COVID Test \n\n");
-        if (this.fullTitle != null) {
-            printStream.println(fullTitle);
-        } else {
-            printStream.printf("List of %s:\n", title);
-        }
         printStream = renderList(printStream);
 
-        printStream.println();  // Add trailing new line
         printStream.print("""
                 0. Back to main menu.
                 -1. Quit application.

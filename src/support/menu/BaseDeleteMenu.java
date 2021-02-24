@@ -24,8 +24,9 @@ public class BaseDeleteMenu extends BaseListMenu {
 
         printStream.print("University of Knowledge - COVID Test \n\n");
 
-        printStream.printf("Removing %s\n", title);
         printStream = renderList(printStream);
+
+        printStream.printf("Removing %s\n\n", title);
 
         printStream.println("Please, enter one of the following:\n");
         printStream.printf("""

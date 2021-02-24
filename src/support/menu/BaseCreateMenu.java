@@ -21,7 +21,7 @@ public class BaseCreateMenu extends BaseListMenu {
         printStream.print("University of Knowledge - COVID Test \n\n");
 
         if (this.fullTitle == null) {
-            printStream.printf("Adding %s\n", title);
+            printStream.printf("Adding %s\n\n", title);
         } else {
             printStream.println(fullTitle);
         }
