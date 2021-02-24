@@ -107,8 +107,13 @@ public class BaseMenu {
                 break;
             default:
                 if (blockOtherOptions) throw new IllegalArgumentException("This option is not valid");
+
                 BaseMenuOption option = decodeOption(optionNumber);
-                option.execute();
+                if (option.methodIdentifier.equals(BaseMenuOption.REDRAW("").methodIdentifier)) {
+                    this.redrawWithMessage((String) option.funcArgs[0]);
+                } else {
+                    option.execute();
+                }
         }
     }
 

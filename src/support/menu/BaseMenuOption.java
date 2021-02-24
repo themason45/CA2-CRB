@@ -61,7 +61,7 @@ public class BaseMenuOption {
         }
     }
 
-    public Object executeOnInstance(Object instance, Object... initArgs) {
+    public Object executeOnInstance(Object instance, Object... initArgs) throws Exception {
         Object[] args = Arrays.copyOf(funcArgs, funcArgs.length + initArgs.length);
 
         if (args.length - funcArgs.length >= 0)
@@ -77,6 +77,9 @@ public class BaseMenuOption {
     }
 
     public static BaseMenuOption NOOP = new BaseMenuOption("No operation", NoOpClass.class, "noop");
+    public static BaseMenuOption REDRAW(String message) {
+        return new BaseMenuOption("Redraw", NoOpClass.class, "redraw", message);
+    }
 
     @Override
     public String toString() {
@@ -91,4 +94,5 @@ class NoOpClass {
     public NoOpClass() {};
     @SuppressWarnings("unused")
     public void noop() {};
+    public void redraw() {};
 }

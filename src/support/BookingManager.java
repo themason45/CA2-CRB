@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 /**
@@ -99,6 +100,10 @@ public class BookingManager {
         return university.assistants.stream().filter(x -> x.checkAvailability(timeSlot)).collect(Collectors.toCollection(ArrayList::new));
     }
 
+    public ArrayList<Assistant> assistantsOnShift(TimeSlot timeSlot) {
+        return university.assistants.stream().filter(x -> x.checkOnShift(timeSlot)).collect(Collectors.toCollection(ArrayList::new));
+    }
+
     public ArrayList<Room> availableRooms(TimeSlot timeSlot) {
         return university.rooms.stream().filter(x -> x.checkAvailability(timeSlot)).collect(Collectors.toCollection(ArrayList::new));
     }
@@ -143,14 +148,27 @@ public class BookingManager {
      * {@link BookingManager#addToShift(Assistant, LocalDate)}, with the local date already filled
      */
     public ArrayList<BaseMenuOption> tsAssistantOptionMap() {
+        return tsAssistantOptionMap(true);
+    }
+
+    /**
+     * @return An ArrayList of {@link BaseMenuOption}s which combine Assistants, and Time slots, and have the function
+     * {@link BookingManager#addToShift(Assistant, LocalDate)}, with the local date already filled
+     */
+    public ArrayList<BaseMenuOption> tsAssistantOptionMap(boolean creation) {
         ArrayList<BaseMenuOption> ol = new ArrayList<>();
 
-        ArrayList<Assistant> assistants = this.getAssistants();
         for (TimeSlot ts : this.getTimeSlots()) {
+            ArrayList<Assistant> assistants = this.assistantsOnShift(ts);
+
             ArrayList<BaseMenuOption> mapped = assistants.stream().map(x ->
-                    new BaseMenuOption(String.format("%s | %s | %s",
+                    creation ? new BaseMenuOption(String.format("%s | %s | %s",
                             ts.getFormattedStartTime(), x.checkAvailability(ts) ? "FREE" : "BUSY", x.getEmail()),
-                            BookingManager.class, "addToShift", x))
+                            BookingManager.class,"addToShift", x) :
+                            new BaseMenuOption(String.format("%s | %s | %s",
+                                    ts.getFormattedStartTime(), x.checkAvailability(ts) ? "FREE" : "BUSY", x.getEmail()),
+                                    BookingManager.class,"removeFromShift", x, ts)
+            )
                     .collect(Collectors.toCollection(ArrayList::new));
             ol.addAll(mapped);
         }
@@ -167,8 +185,9 @@ public class BookingManager {
     public ArrayList<String> tsAssistantMap() {
         ArrayList<String> ol = new ArrayList<>();
 
-        ArrayList<Assistant> assistants = this.getAssistants();
         for (TimeSlot ts : this.getTimeSlots()) {
+            ArrayList<Assistant> assistants = this.assistantsOnShift(ts);
+
             ArrayList<String> mapped = assistants.stream().map(x ->
                     String.format("%s | %s | %s", ts.getFormattedStartTime(), x.checkAvailability(ts) ? "FREE" : "BUSY",
                             x.getEmail())).collect(Collectors.toCollection(ArrayList::new));
@@ -190,8 +209,22 @@ public class BookingManager {
         university.assistants = new ModelWrapper<Assistant>().updateArr(university.assistants, assistant);
     }
 
+    @SuppressWarnings("unused")
+    public void removeFromShift(Assistant assistant, TimeSlot timeSlot) {
+        int dow = timeSlot.start.getDayOfWeek().getValue();
+        assistant.removeDayActive(dow);
+
+        university.assistants = new ModelWrapper<Assistant>().updateArr(university.assistants, assistant);
+    }
+
     public ArrayList<Booking> getBookings() {
         return this.bookings;
+    }
+
+
+    @SuppressWarnings("unused")
+    public void deleteBooking(Booking booking) throws NullPointerException {
+        this.bookings.remove(booking);
     }
 
     /**
@@ -219,5 +252,4 @@ public class BookingManager {
     public ArrayList<Room> getRooms() {
         return university.rooms;
     }
-
 }

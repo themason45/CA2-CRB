@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"main"},{"l":"main.menus"},{"l":"main.menus.assistants"},{"l":"main.menus.bookings"},{"l":"main.menus.rooms"},{"l":"models"},{"l":"support"},{"l":"support.menu"}];updateSearchResults();
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"menus"},{"l":"menus.assistants"},{"l":"menus.bookings"},{"l":"menus.rooms"},{"l":"models"},{"l":"support"},{"l":"support.menu"}];updateSearchResults();

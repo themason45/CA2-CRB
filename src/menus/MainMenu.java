@@ -2,7 +2,9 @@ package menus;
 
 import menus.assistants.AddAssistantsOnShitMenu;
 import menus.assistants.AssistantsOnShiftList;
+import menus.assistants.DeleteAssistantOnShiftMenu;
 import menus.bookings.AddBookingMenu;
+import menus.bookings.DeleteBookingMenu;
 import menus.rooms.AddBookableRoomMenu;
 import menus.rooms.BookableRoomList;
 import menus.bookings.SelectBookingsList;
@@ -33,11 +35,13 @@ public class MainMenu extends BaseMenu {
         options.add(new BaseMenuOption("To manage Assistants on shift:"));
         options.add(new SegueOption("List", AssistantsOnShiftList.class, this, scanner, bookingManager));
         options.add(new SegueOption("Add", AddAssistantsOnShitMenu.class, this, scanner, bookingManager));
+        options.add(new SegueOption("Delete", DeleteAssistantOnShiftMenu.class, this, scanner, bookingManager));
 
         // Bookings
         options.add(new BaseMenuOption("To manage Bookings:"));
         options.add(new SegueOption("List", SelectBookingsList.class, this, scanner, bookingManager));
         options.add(new SegueOption("Add", AddBookingMenu.class, this, scanner, bookingManager));
+        options.add(new SegueOption("Delete", DeleteBookingMenu.class, this, scanner, bookingManager));
     }
 
     public void setBookingManager(BookingManager bookingManager) {

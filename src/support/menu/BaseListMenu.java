@@ -26,9 +26,13 @@ public class BaseListMenu extends BaseMenu {
 
     public PrintStream renderList(PrintStream stream) {
         int i = offset;
-        for (Object option : list) {
-            stream.printf("\t %d.\t %s\n", i, option.toString());
-            i++;
+        if (list.isEmpty()) {
+            stream.println("\tEmpty");
+        } else {
+            for (Object option : list) {
+                stream.printf("\t %d.\t %s\n", i, option.toString());
+                i++;
+            }
         }
         return stream;
     }

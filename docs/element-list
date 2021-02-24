@@ -1,8 +1,8 @@
-main
-main.menus
-main.menus.assistants
-main.menus.bookings
-main.menus.rooms
+unnamed package
+menus
+menus.assistants
+menus.bookings
+menus.rooms
 models
 support
 support.menu

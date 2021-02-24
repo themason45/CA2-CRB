@@ -70,7 +70,7 @@ public class University extends BaseModel {
     /**
      * Fills out the {@link #rooms} list on the current University object
      *
-     * @param csv The parsed csv from the {@link BookingApp#parseCsv(InputStream)} method
+     * @param csv The parsed csv from the {@link Support#parseCsv(InputStream)} method
      */
     public void populateRooms(String[][] csv) {
         for (String[] row : csv) {

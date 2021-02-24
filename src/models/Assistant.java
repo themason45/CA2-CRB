@@ -115,18 +115,24 @@ public class Assistant extends BaseModel {
     }
 
     public void addDayActive(Integer day) {
-        if (0 < day & day < 6) {
+        if (1 <= day & day <= 7) {
             Integer[] copy = Arrays.copyOf(daysActive, daysActive.length + 1);
-            copy[daysActive.length] = day;
+            copy[daysActive.length] = day - 1;
             this.daysActive = Arrays.stream(copy).sorted(((o1, o2) -> (o1 > o2) ? 1 : 0)).toArray(Integer[]::new);
         }
     }
 
     public void removeDayActive(Integer day) {
-        if (0 < day & day < 6) {
-            int index = Arrays.asList(daysActive).indexOf(day);
-            System.arraycopy(daysActive, daysActive.length - 1, daysActive, index,
-                    daysActive.length - index - 1);
+        if (1 <= day & day <= 7) {
+            int index = Arrays.asList(daysActive).indexOf(day - 1);
+            Integer[] copy = new Integer[daysActive.length - 1];
+
+            for (int i = 0, j = 0; i < daysActive.length; i++) {
+                if (i != index) {
+                    copy[j++] = daysActive[i];
+                }
+            }
+            daysActive = copy;
         }
     }
 }

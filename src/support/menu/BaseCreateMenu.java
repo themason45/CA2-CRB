@@ -20,7 +20,11 @@ public class BaseCreateMenu extends BaseListMenu {
 
         printStream.print("University of Knowledge - COVID Test \n\n");
 
-        printStream.printf("Adding %s\n", title);
+        if (this.fullTitle == null) {
+            printStream.printf("Adding %s\n", title);
+        } else {
+            printStream.println(fullTitle);
+        }
         printStream = renderList(printStream);
 
         printStream.println("Please, enter one of the following:\n");
