@@ -116,6 +116,18 @@ public class BookingManager {
         return this.timeSlots;
     }
 
+    public ArrayList<BaseMenuOption> deleteBookableRoomOptions() {
+        ArrayList<BaseMenuOption> deleteBookableRoomOptions = new ArrayList<>();
+
+        for (TimeSlot ts : this.getTimeSlots()) {
+            deleteBookableRoomOptions.addAll(bookableRooms(ts).stream().filter(x -> x.status(ts).equals("EMPTY"))
+                    .map(room -> new BaseMenuOption(room.toBookableRoomString(ts), BookingManager.class,
+                            "removeBookableRoom", room, ts))
+                    .collect(Collectors.toCollection(ArrayList::new)));
+        }
+        return deleteBookableRoomOptions;
+    }
+
     public ArrayList<String> formattedBookableRooms() {
         ArrayList<String> formattedBookableRooms = new ArrayList<>();
 
@@ -131,12 +143,18 @@ public class BookingManager {
         int roomIndex = this.university.rooms.indexOf(room);
 
         TimeSlot timeSlot = this.getTimeSlotForStartTime(TimeSlot.cleanDateTime(date, time));
-        System.out.println(timeSlot);
         room.bookableTimeslots.add(timeSlot);
 
         this.university.rooms.set(roomIndex, room);
 
         return room;
+    }
+
+    @SuppressWarnings("unused")
+    public void removeBookableRoom(Room room, TimeSlot timeSlot) {
+        room.bookableTimeslots.remove(timeSlot);
+
+        university.rooms = new ModelWrapper<Room>().updateArr(university.rooms, room);
     }
 
     public ArrayList<Assistant> getAssistants() {
@@ -159,7 +177,7 @@ public class BookingManager {
         ArrayList<BaseMenuOption> ol = new ArrayList<>();
 
         for (TimeSlot ts : this.getTimeSlots()) {
-            ArrayList<Assistant> assistants = this.assistantsOnShift(ts);
+            ArrayList<Assistant> assistants = this.availableAssistants(ts);
 
             ArrayList<BaseMenuOption> mapped = assistants.stream().map(x ->
                     creation ? new BaseMenuOption(String.format("%s | %s | %s",
@@ -168,8 +186,7 @@ public class BookingManager {
                             new BaseMenuOption(String.format("%s | %s | %s",
                                     ts.getFormattedStartTime(), x.checkAvailability(ts) ? "FREE" : "BUSY", x.getEmail()),
                                     BookingManager.class,"removeFromShift", x, ts)
-            )
-                    .collect(Collectors.toCollection(ArrayList::new));
+            ).collect(Collectors.toCollection(ArrayList::new));
             ol.addAll(mapped);
         }
 
@@ -186,7 +203,7 @@ public class BookingManager {
         ArrayList<String> ol = new ArrayList<>();
 
         for (TimeSlot ts : this.getTimeSlots()) {
-            ArrayList<Assistant> assistants = this.assistantsOnShift(ts);
+            ArrayList<Assistant> assistants = this.availableAssistants(ts);
 
             ArrayList<String> mapped = assistants.stream().map(x ->
                     String.format("%s | %s | %s", ts.getFormattedStartTime(), x.checkAvailability(ts) ? "FREE" : "BUSY",

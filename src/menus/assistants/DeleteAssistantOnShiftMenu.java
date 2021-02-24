@@ -18,6 +18,11 @@ public class DeleteAssistantOnShiftMenu extends BaseDeleteMenu {
     }
 
     @Override
+    public String generateOnCompleteMessage(Object obj) {
+        return String.format("Assistant on Shift removed successfully:\n%s", obj.toString());
+    }
+
+    @Override
     public void postDelete() {
         // Update the list
         this.list = bookingManager.tsAssistantOptionMap(false);

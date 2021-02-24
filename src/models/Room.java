@@ -106,10 +106,6 @@ public class Room extends BaseModel {
         else return null;
     }
 
-    public void setOccupancy(int occupancy) {
-        this.occupancy = occupancy;
-    }
-
     public int getOccupancy(TimeSlot timeSlot) {
         return (int) this.bookings.stream().filter(x -> x.getTimeSlot() == timeSlot).count();
     }
