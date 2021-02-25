@@ -43,7 +43,7 @@ public class AddBookingMenu extends BaseCreateMenu {
         }
 
         if (!Assistant.checkEmail(split[1])) try {
-            throw new DataFormatException("The given email is not in the correct format");
+            throw new DataFormatException("The given email is not in the correct format (...@uok.ac.uk)");
         } catch (DataFormatException e) {
             this.error(e);
         }
