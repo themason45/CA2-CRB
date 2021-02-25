@@ -1,5 +1,6 @@
 package models;
 
+import support.ModelWrapper;
 import support.TimeSlot;
 
 import java.time.LocalDate;
@@ -88,24 +89,19 @@ public class Assistant extends BaseModel {
     }
 
     /**
-     * @return String in the format: | <name> | <email> |
+     * @return String in the format: | name | email |
      */
     public String toString() {
         return String.format("| %s | %s |", name, email);
-    }
-
-    public void setUniversity(University university) {
-        this.university = university;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public String getEmail() {
         return email;
     }
 
+    /**
+     * @param booking The booking to be added to the assistant
+     */
     public void addBooking(Booking booking) {
         if (this.checkAvailability(booking.getTimeSlot())) {
             this.bookings.add(booking);
@@ -114,6 +110,23 @@ public class Assistant extends BaseModel {
         }
     }
 
+    /**
+     * @param booking The booking to be updated (updates when status of the booking changes)
+     */
+    public void updateBooking(Booking booking) {
+        new ModelWrapper<Booking>().updateArr(bookings, booking);
+    }
+
+    /**
+     * @param booking The booking to be removed from the assistant
+     */
+    public void removeBooking(Booking booking) {
+        this.bookings.add(booking);
+    }
+
+    /**
+     * @param day The day of the week to the assistant
+     */
     public void addDayActive(Integer day) {
         if (1 <= day & day <= 7) {
             Integer[] copy = Arrays.copyOf(daysActive, daysActive.length + 1);
@@ -122,6 +135,9 @@ public class Assistant extends BaseModel {
         }
     }
 
+    /**
+     * @param day The day of the week to be removed from the assistant
+     */
     public void removeDayActive(Integer day) {
         if (1 <= day & day <= 7) {
             int index = Arrays.asList(daysActive).indexOf(day - 1);
@@ -136,8 +152,16 @@ public class Assistant extends BaseModel {
         }
     }
 
+    /**
+     * @param timeSlot The timeslot to display the assistant on shift at
+     * @return String in the format: | start time | status | email |
+     */
     public String onShiftDescriptionString(TimeSlot timeSlot) {
         return String.format("%s | %s | %s", timeSlot.getFormattedStartTime(), this.checkAvailability(timeSlot) ? "FREE" : "BUSY",
                 this.getEmail());
+    }
+
+    public void setUniversity(University university) {
+        this.university = university;
     }
 }

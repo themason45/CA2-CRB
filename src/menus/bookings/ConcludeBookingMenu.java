@@ -7,6 +7,9 @@ import support.menu.BaseMenuOption;
 
 import java.util.Scanner;
 
+/**
+ * Lets the user select a booking, which is then marked as completed
+ */
 public class ConcludeBookingMenu extends BaseCreateMenu {
     public ConcludeBookingMenu(MainMenu previousMenu, Scanner scanner, BookingManager bookingManager) {
         super(previousMenu, scanner, bookingManager);
@@ -20,6 +23,10 @@ public class ConcludeBookingMenu extends BaseCreateMenu {
         this.list = bookingManager.completeBookingOptions();
     }
 
+    /**
+     * @param input The sequential ID of the given option
+     * @return The {@link BaseMenuOption} that corresponds to that given ID
+     */
     @Override
     public BaseMenuOption decodeOption(int input) {
         if (input - offset > this.list.size())
@@ -28,6 +35,10 @@ public class ConcludeBookingMenu extends BaseCreateMenu {
         return (BaseMenuOption) this.list.get(input - offset);
     }
 
+    /**
+     * Executed once the option's method has been invoked
+     * @param option The option that was selected
+     */
     @Override
     public void postExecute(BaseMenuOption option) {
         this.list = bookingManager.completeBookingOptions();

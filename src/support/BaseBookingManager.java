@@ -35,7 +35,7 @@ public class BaseBookingManager {
     }
 
     public ArrayList<Room> bookableRooms(TimeSlot timeSlot) {
-        return university.rooms.stream().filter(x -> x.bookable(timeSlot)).collect(Collectors.toCollection(ArrayList::new));
+        return university.rooms.stream().filter(x -> x.isBookableAt(timeSlot)).collect(Collectors.toCollection(ArrayList::new));
     }
 
     // Overflow methods for creating bookings
@@ -87,6 +87,16 @@ public class BaseBookingManager {
     @SuppressWarnings("unused")
     public void deleteBooking(Booking booking) throws NullPointerException {
         this.bookings.remove(booking);
+
+        Room room = booking.getRoom();
+        room.removeBooking(booking);
+
+        Assistant assistant = booking.getAssistant();
+        assistant.removeBooking(booking);
+
+        // Update the existing lists
+        new ModelWrapper<Room>().updateArr(university.rooms, room);
+        new ModelWrapper<Assistant>().updateArr(university.assistants, assistant);
     }
 
     public ArrayList<Booking> getScheduledBookings() {
@@ -104,5 +114,16 @@ public class BaseBookingManager {
     public void completeBooking(Booking booking) {
         booking.completeTest();
         bookings = new ModelWrapper<Booking>().updateArr(bookings, booking);
+
+        // Update rooms
+        Room room = booking.getRoom();
+        room.updateBooking(booking);
+
+        Assistant assistant = booking.getAssistant();
+        assistant.updateBooking(booking);
+
+        // Update the existing lists
+        new ModelWrapper<Room>().updateArr(university.rooms, room);
+        new ModelWrapper<Assistant>().updateArr(university.assistants, assistant);
     }
 }

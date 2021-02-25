@@ -38,8 +38,15 @@ public class BaseDeleteMenu extends BaseListMenu {
         return byteArrayOutputStream;
     }
 
+    /**
+     * Executed once the given object has been deleted
+     */
     public void postDelete() {}
 
+    /**
+     * @param obj The object to be displayed in the on complete message
+     * @return A string telling the user that the given item has been deleted successfully
+     */
     public String generateOnCompleteMessage(Object obj) {
         return obj.toString();
     }

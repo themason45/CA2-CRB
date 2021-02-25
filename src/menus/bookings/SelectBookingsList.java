@@ -8,6 +8,10 @@ import support.menu.SegueOption;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Displays a list of booking statuses as an intermediate step before showing the list of
+ * bookings in {@link BookingsList}.
+ */
 public class SelectBookingsList extends BaseMenu {
     BookingManager bookingManager;
 

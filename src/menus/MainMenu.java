@@ -18,14 +18,19 @@ import support.menu.SegueOption;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * The main menu, which displays a set of options to the user, these include:
+ * <ul>
+ *     <li>{@link BaseMenuOption}s for the subheadings in the list</li>
+ *     <li>{@link SegueOption}s to fire the user off to other views</li>
+ * </ul>
+ */
 public class MainMenu extends BaseMenu {
-    private BookingManager bookingManager;
 
     public MainMenu(BookingManager bookingManager, Scanner scanner) {
         super(null, scanner, bookingManager);
         this.title = "Manage bookings";
         this.options = new ArrayList<>();
-        this.bookingManager = bookingManager;
         this.longFooter = true;
 
         // Bookable rooms

@@ -61,6 +61,7 @@ public class BaseMenuOption {
         }
     }
 
+    @SuppressWarnings("RedundantThrows")
     public Object executeOnInstance(Object instance, Object... initArgs) throws Exception {
         Object[] args = Arrays.copyOf(funcArgs, funcArgs.length + initArgs.length);
 
@@ -91,8 +92,8 @@ public class BaseMenuOption {
  * Used by the NOOP static option, does absolutely nothing
  */
 class NoOpClass {
-    public NoOpClass() {};
+    public NoOpClass() {}
     @SuppressWarnings("unused")
-    public void noop() {};
-    public void redraw() {};
+    public void noop() {}
+    public void redraw() {}
 }

@@ -1,8 +1,10 @@
 package models;
 
+import support.ModelWrapper;
 import support.TimeSlot;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 /**
  * Room object is defined as follows:
@@ -32,14 +34,12 @@ import java.util.ArrayList;
  * </ul>
  */
 public class Room extends BaseModel {
-    private String roomCode;
-    private int capacity;
+    private final String roomCode;
+    private final int capacity;
     private University university;
 
-    // Bookable room stuff
-    private int occupancy;
     public ArrayList<TimeSlot> bookableTimeslots;
-    private ArrayList<Booking> bookings;
+    private final ArrayList<Booking> bookings;
 
     ArrayList<Integer> bookableTimeSlotIndices;
 
@@ -59,16 +59,24 @@ public class Room extends BaseModel {
         this.bookings = new ArrayList<>();
     }
 
-    public boolean bookable(TimeSlot timeSlot) {
+    /**
+     * @param timeSlot The timeslot to check if it is bookable at
+     * @return True if the room is bookable at that timeslot
+     */
+    public boolean isBookableAt(TimeSlot timeSlot) {
         return bookableTimeslots.contains(timeSlot);
     }
 
+    /**
+     * @param timeSlot The {@link TimeSlot} to check the availability of a room at
+     * @return True if the room is available at that given timeslot
+     */
     public boolean checkAvailability(TimeSlot timeSlot) {
-        if (!bookable(timeSlot)) return false;
+        if (!isBookableAt(timeSlot)) return false;
 
         // Check if there are no bookings with the current time slot
         boolean noBookings = true;
-        for (Booking booking : bookings) {
+        for (Booking booking : bookings.stream().filter(x -> !x.getIsCompleted()).collect(Collectors.toList())) {
             noBookings = booking.getTimeSlot() != timeSlot;
         }
         return noBookings;
@@ -86,6 +94,9 @@ public class Room extends BaseModel {
         return this.roomCode;
     }
 
+    /**
+     * @param booking The booking to be added to the assistant
+     */
     public void addBooking(Booking booking) {
         if (this.checkAvailability(booking.getTimeSlot())) {
             this.bookings.add(booking);
@@ -94,25 +105,58 @@ public class Room extends BaseModel {
         }
     }
 
+    /**
+     * @param booking The booking to be updated (updates when status of the booking changes)
+     */
+    public void updateBooking(Booking booking) {
+        new ModelWrapper<Booking>().updateArr(bookings, booking);
+    }
+
+    /**
+     * @param booking The booking to be removed from the assistant
+     */
+    public void removeBooking(Booking booking) {
+        this.bookings.remove(booking);
+    }
+
     public Integer[] getBookableTimeSlotIndices() {
         return bookableTimeSlotIndices.toArray(new Integer[0]);
     }
 
+    /**
+     * @param timeSlot The timeslot to find the status for
+     * @return The status of the room at a given timeslot
+     */
     public String status(TimeSlot timeSlot) {
-        occupancy = getOccupancy(timeSlot);
+        // Bookable room stuff
+        int occupancy = getOccupancy(timeSlot);
         if (occupancy == 0) return "EMPTY";
         if (occupancy < capacity) return "AVAILABLE";
         if (occupancy == capacity) return "FULL";
         else return null;
     }
 
+    /**
+     * @param timeSlot The {@link TimeSlot} to check the rooms occupancy at
+     * @return The number of scheduled bookings in the room at a given timeslot
+     */
     public int getOccupancy(TimeSlot timeSlot) {
-        return (int) this.bookings.stream().filter(x -> x.getTimeSlot() == timeSlot).count();
+        return (int) this.bookings.stream()
+                .filter(x -> !x.getIsCompleted())
+                .filter(x -> x.getTimeSlot() == timeSlot).count();
     }
 
+    /**
+     * @param ts The timeslot to return the room in a bookable format
+     * @return A string in the form | start timeslot | the status | room code | occupancy |
+     */
     public String toBookableRoomString(TimeSlot ts) {
         return String.format(
                 "| %s | %s | %s | occupancy: %d |", ts.getFormattedStartTime(), this.status(ts),
                 this.getRoomCode(), this.getOccupancy(ts));
+    }
+
+    public University getUniversity() {
+        return university;
     }
 }

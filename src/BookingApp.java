@@ -24,6 +24,13 @@ import java.util.Scanner;
  */
 public class BookingApp {
 
+    /**
+     * The main function of the program, this loads the data from CSV to begin with, then it creates some sample
+     * bookings with the appropriate status, and one in a room with a capacity of one, in order to make that room
+     * appear full.
+     *
+     * @param args Arguments passed into the program (not used)
+     */
     public static void main(String[] args) {
         // Create a University instance
         University university = new University(0);

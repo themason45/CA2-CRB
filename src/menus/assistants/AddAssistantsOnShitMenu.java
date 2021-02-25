@@ -1,6 +1,7 @@
 package menus.assistants;
 
 import menus.MainMenu;
+import models.Assistant;
 import support.BookingManager;
 import support.menu.BaseCreateMenu;
 import support.menu.BaseMenuOption;
@@ -10,6 +11,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 import java.util.zip.DataFormatException;
 
+/**
+ * Adds a day of the week to the selected {@link models.Assistant} at the given date (which creates a corresponding
+ * {@link support.TimeSlot}).
+ */
 public class AddAssistantsOnShitMenu extends BaseCreateMenu {
 
     public AddAssistantsOnShitMenu(MainMenu previousMenu, Scanner scanner, BookingManager bookingManager) {
@@ -21,6 +26,12 @@ public class AddAssistantsOnShitMenu extends BaseCreateMenu {
         this.instructions = "The sequential ID of an assistant and date (dd/mm/yyyy), separated by a white space.";
     }
 
+    /**
+     * Invokes the {@link BookingManager#addToShift(Assistant, LocalDate)} method on the current instance, with the given
+     * attributes.
+     *
+     * @param input The string inputted by the user
+     */
     @Override
     public void performCreation(String input) {
         String[] split = input.split(" ");

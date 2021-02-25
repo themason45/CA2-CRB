@@ -21,10 +21,10 @@ import support.TimeSlot;
  * </ul>
  */
 public class Booking extends BaseModel {
-    private TimeSlot timeSlot;
-    private Room room;
-    private Assistant assistant;
-    private String studentEmail;
+    private final TimeSlot timeSlot;
+    private final Room room;
+    private final Assistant assistant;
+    private final String studentEmail;
 
     private boolean isCompleted;
 
@@ -44,9 +44,12 @@ public class Booking extends BaseModel {
         return isCompleted ? "COMPLETED" : "SCHEDULED";
     }
 
+    /**
+     * @return A string in the format | start time | status | assistant email | room code | student email |
+     */
     @Override
     public String toString() {
-        return String.format("%s | %s | %s | %s | %s",
+        return String.format("| %s | %s | %s | %s | %s |",
                 timeSlot.getFormattedStartTime(), getStatus(), assistant.getEmail(),
                 room.getRoomCode(), studentEmail);
     }
@@ -55,7 +58,18 @@ public class Booking extends BaseModel {
         return isCompleted;
     }
 
+    /**
+     * Marks this booking as complete
+     */
     public void completeTest() {
         this.isCompleted = true;
+    }
+
+    public Room getRoom() {
+        return this.room;
+    }
+
+    public Assistant getAssistant() {
+        return this.assistant;
     }
 }

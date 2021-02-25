@@ -4,12 +4,17 @@ import menus.MainMenu;
 import models.Assistant;
 import models.Booking;
 import support.BookingManager;
+import support.TimeSlot;
 import support.menu.BaseCreateMenu;
 import support.menu.BaseMenuOption;
 
 import java.util.Scanner;
 import java.util.zip.DataFormatException;
 
+/**
+ * Add a booking to the system, given a displayed available timeslot, and an email of the student to be tested.
+ * The Rooms, and Assistants are allocated automatically.
+ */
 public class AddBookingMenu extends BaseCreateMenu {
 
     public AddBookingMenu(MainMenu previousMenu, Scanner scanner, BookingManager bookingManager) {
@@ -22,6 +27,11 @@ public class AddBookingMenu extends BaseCreateMenu {
         this.instructions = "The sequential ID of an available time-slot and the student email, separated by a white space.";
     }
 
+    /**
+     * Invokes the {@link BookingManager#createBooking(TimeSlot, String)} method on the given instance.
+     *
+     * @param input The string inputted by the user
+     */
     @Override
     public void performCreation(String input) {
         String[] split = input.split(" ");

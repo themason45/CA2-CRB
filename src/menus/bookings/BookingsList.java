@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+/**
+ * Displays a list of bookings given a status which is passed in the constructor
+ */
 public class BookingsList extends BaseListMenu {
 
     public BookingsList(MainMenu previousMenu, Scanner scanner, BookingManager bookingManager, Integer status) {
