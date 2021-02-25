@@ -3,10 +3,13 @@ package menus.assistants;
 import menus.MainMenu;
 import models.Assistant;
 import support.BookingManager;
+import support.TimeSlot;
 import support.menu.BaseCreateMenu;
 import support.menu.BaseMenuOption;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 import java.util.zip.DataFormatException;
@@ -47,7 +50,9 @@ public class AddAssistantsOnShitMenu extends BaseCreateMenu {
 
         // Add the time shift to the assistant through the booking manager
         try {
-            option.executeOnInstance(bookingManager, LocalDate.parse(split[1], DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            String resp = (String) option.executeOnInstance(bookingManager, LocalDate.parse(split[1], DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+
+            this.redrawWithMessage(String.format("Assistant on Shift added successfully:\n%s", resp));
         } catch (Exception e) {
             this.error(e);
         }

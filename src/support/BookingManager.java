@@ -241,11 +241,13 @@ public class BookingManager extends BaseBookingManager {
      * @param assistant The assistant to be put on shift
      */
     @SuppressWarnings("unused")
-    public void addToShift(Assistant assistant, LocalDate localDate) {
+    public String addToShift(Assistant assistant, LocalDate localDate) {
         int dow = localDate.getDayOfWeek().getValue();
         assistant.addDayActive(dow);
 
+
         university.assistants = new ModelWrapper<Assistant>().updateArr(university.assistants, assistant);
+        return assistant.onShiftDescriptionString(getTimeSlotForStartTime(LocalDateTime.of(localDate, LocalTime.of(7, 0))));
     }
 
     /**
