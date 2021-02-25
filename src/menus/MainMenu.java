@@ -51,6 +51,8 @@ public class MainMenu extends BaseMenu {
         options.add(new SegueOption("Add", AddBookingMenu.class, this, scanner, bookingManager));
         options.add(new SegueOption("Delete", DeleteBookingMenu.class, this, scanner, bookingManager));
         options.add(new SegueOption("Conclude", ConcludeBookingMenu.class, this, scanner, bookingManager));
+
+        this.clearScreen();
     }
 
     public void setBookingManager(BookingManager bookingManager) {

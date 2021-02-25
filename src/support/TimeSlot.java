@@ -72,11 +72,12 @@ public class TimeSlot {
      * @return A {@link LocalDateTime} instance with the given data, but with the time set on the hour, within the
      * correct window of hours
      */
-    public static LocalDateTime cleanDateTime(LocalDate date, LocalTime time) {
+    public static LocalDateTime cleanDateTime(LocalDate date, LocalTime time) throws IllegalArgumentException {
         Properties props = Support.appProps();
         int slotCount = Integer.parseInt((String) props.get("timeslot.count"));
 
-        if (time.getHour() < 7 | (time.getHour() == 7 + slotCount & time.getMinute() > 0)) throw new IllegalArgumentException(
+        if (time.getHour() < 7 | (time.getHour() >= (7 + slotCount) & time.getMinute() > 0) | (time.getHour() >
+                (7 + slotCount) & time.getMinute() == 0)) throw new IllegalArgumentException(
                 String.format("Given time is unavailable, must be between 07:00, and %02d:00", 7 + slotCount));
 
         return LocalDateTime.of(date, time.withMinute(0));

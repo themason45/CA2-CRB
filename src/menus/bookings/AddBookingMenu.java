@@ -23,7 +23,8 @@ public class AddBookingMenu extends BaseCreateMenu {
 
         this.list = bookingManager.getTimeSlotOptions();
 
-        this.title = "Adding booking (appointment for a COVID test) to the system";
+        this.fullTitle = "Adding booking (appointment for a COVID test) to the system\n";
+        this.title = "available time-slots";
         this.instructions = "The sequential ID of an available time-slot and the student email, separated by a white space.";
     }
 

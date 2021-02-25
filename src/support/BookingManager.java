@@ -150,7 +150,7 @@ public class BookingManager extends BaseBookingManager {
      * @return The updated room, note that the given instance's room list is also updated
      */
     @SuppressWarnings("unused")
-    public Room addBookableRoom(Room room, LocalDate date, LocalTime time) {
+    public Room addBookableRoom(Room room, LocalDate date, LocalTime time) throws IllegalArgumentException {
         int roomIndex = this.university.rooms.indexOf(room);
 
         TimeSlot timeSlot = this.getTimeSlotForStartTime(TimeSlot.cleanDateTime(date, time));

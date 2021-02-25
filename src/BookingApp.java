@@ -56,5 +56,4 @@ public class BookingApp {
         MainMenu mainMenu = new MainMenu(bookingManager, scanner);
         mainMenu.draw();
     }
-
 }
