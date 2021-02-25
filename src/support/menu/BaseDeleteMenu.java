@@ -51,6 +51,12 @@ public class BaseDeleteMenu extends BaseListMenu {
         return obj.toString();
     }
 
+    /**
+     * This not only finds the selected option, but it also executes the option too
+     *
+     * @param input The input number from the user
+     * @return The option corresponding to the selected ID
+     */
     public BaseMenuOption decodeOption(int input) {
         try {
             Object object = list.get(input - offset);
@@ -76,6 +82,10 @@ public class BaseDeleteMenu extends BaseListMenu {
         return BaseMenuOption.NOOP;
     }
 
+    /**
+     *
+     * @param skipLine Whether the system should skip a line once the page has been drawn.
+     */
     public void postDraw(boolean skipLine) {
         // Take the user's input
         if (!skipLine) scanner.nextLine();

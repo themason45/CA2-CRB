@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Properties;
 
+/**
+ * A predefined couple of {@link LocalDateTime}s, as well as a set of methods that support the use of them
+ */
 public class TimeSlot {
     public LocalDateTime start;
     public LocalDateTime finish;
@@ -17,6 +20,10 @@ public class TimeSlot {
         this.finish = finish;
     }
 
+    /**
+     * @param date The date to find timeslots for
+     * @return A collection of TimeSlots for the given date
+     */
     public static Collection<? extends TimeSlot> slotsForDate(LocalDate date){
         Properties props = Support.appProps();
         int slotLength = Integer.parseInt((String) props.get("timeslot.length"));
@@ -45,18 +52,26 @@ public class TimeSlot {
         return this.start.minusDays(dow-1).toLocalDate(); // Get date of the week beginning
     }
 
+    /**
+     * @return A string in the format | start time | finish time |
+     */
     public String toString() {
-        return String.format("%s | %s", start, finish);
+        return String.format("| %s | %s |", start, finish);
     }
 
-    public Boolean hasElapsed() {
-        return LocalDateTime.now().isAfter(this.finish);
-    }
-
+    /**
+     * @return The start time as a string, in the format dd/MM/yyyy hh:mm.
+     */
     public String getFormattedStartTime() {
         return start.format(DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm"));
     }
 
+    /**
+     * @param date The date to build the datetime with
+     * @param time The time to build the datetime with
+     * @return A {@link LocalDateTime} instance with the given data, but with the time set on the hour, within the
+     * correct window of hours
+     */
     public static LocalDateTime cleanDateTime(LocalDate date, LocalTime time) {
         Properties props = Support.appProps();
         int slotCount = Integer.parseInt((String) props.get("timeslot.count"));

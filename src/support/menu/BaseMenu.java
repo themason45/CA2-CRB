@@ -2,7 +2,6 @@ package support.menu;
 
 import support.BookingManager;
 
-import javax.swing.text.html.Option;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -134,9 +133,19 @@ public class BaseMenu {
         }
     }
 
+    /**
+     * Once the option has been executed, then run this
+     * @param option The option that was executed
+     */
     public void postExecute(BaseMenuOption option) {
     }
 
+    /**
+     * Once the menu has been drawn, then run this, normally to take the user's input as an int, but can be
+     * overridden to take strings as the input
+     *
+     * @param skipLine Whether the system should skip a line once the page has been drawn.
+     */
     public void postDraw(boolean skipLine) {
         // Take the user's input
         try {
@@ -173,12 +182,22 @@ public class BaseMenu {
         System.out.flush();
     }
 
+    /**
+     * Redraws the menu with a given method
+     *
+     * @param message The message to prepend the view with
+     */
     public void redrawWithMessage(String message) {
         ByteArrayOutputStream baos = this.printStream();
         System.out.printf("%s\n%s", message, baos.toString());
         this.postDraw(true);
     }
 
+    /**
+     * Prepends the menu display with a given exception's message
+     *
+     * @param e The method who's {@link Exception#getMessage()} is displayed
+     */
     public void error(Exception e) {
         this.clearScreen();
         this.redrawWithMessage(String.format("Error!\n%s", e.getMessage()));

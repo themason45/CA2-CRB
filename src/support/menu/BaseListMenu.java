@@ -24,6 +24,10 @@ public class BaseListMenu extends BaseMenu {
         this.blockOtherOptions = true;
     }
 
+    /**
+     * @param stream The stream to update
+     * @return An updated stream with the list of options printed, at an offset from 0.
+     */
     public PrintStream renderList(PrintStream stream) {
         int i = offset;
         title = title.endsWith("s") ? title : String.format("%ss", title);

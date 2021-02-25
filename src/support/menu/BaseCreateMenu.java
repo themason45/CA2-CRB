@@ -6,6 +6,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
 
+/**
+ * An extension of {@link BaseListMenu} which provides necessary methods for the creation of objects, this could
+ * be creating them onto an instance of {@link BookingManager}.
+ */
 public class BaseCreateMenu extends BaseListMenu {
     protected String instructions = "";
 
@@ -14,6 +18,12 @@ public class BaseCreateMenu extends BaseListMenu {
         blockOtherOptions = true;
     }
 
+    /**
+     * Same as {@link BaseListMenu#printStream()}, but outputs a different style of view, some blocks of text have
+     * been rearranged for example
+     *
+     * @return A stream which can be converted to a string, this is what will be displayed on screen
+     */
     public ByteArrayOutputStream printStream() {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(byteArrayOutputStream);
@@ -39,14 +49,27 @@ public class BaseCreateMenu extends BaseListMenu {
         return byteArrayOutputStream;
     }
 
+    /**
+     * @param input The input number from the user
+     * @return {@link BaseMenuOption#NOOP}
+     */
     public BaseMenuOption decodeOption(int input) {
         return BaseMenuOption.NOOP;
     }
 
+    /**
+     * @param input The string inputted by the user
+     */
     public void performCreation(String input) {
         throw new UnsupportedOperationException("This function must be overridden");
     }
 
+    /**
+     * Once the list has been drawn, this takes a string input, instead of an integer, as it can take more than just
+     * the sequential ID.
+     *
+     * @param skipLine Whether the system should skip a line once the page has been drawn.
+     */
     public void postDraw(boolean skipLine) {
         // Take the user's input
         if (!skipLine) scanner.nextLine();

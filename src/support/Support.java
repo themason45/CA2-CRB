@@ -8,16 +8,26 @@ import java.util.Properties;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+/**
+ * Provides a set of static methods which provide a selection of uses across the project
+ */
 public class Support {
 
-    public static ClassLoader getClassloader() {
+    private static ClassLoader getClassloader() {
         return getClassloader(Support.class);
     }
 
+    /**
+     * @param thisClass The class to get the classloader of
+     * @return The classloader for the given class
+     */
     public static ClassLoader getClassloader(Class<?> thisClass) {
         return thisClass.getClassLoader();
     }
 
+    /**
+     * @return The {@link Properties} for the project.
+     */
     public static Properties appProps() {
         ClassLoader cl = getClassloader();
 
